@@ -1,0 +1,12 @@
+[
+  {
+    "username": "organiser",
+    "passwordHash": "$2a$10$BcgtEXGhFQhmVPXVWJ5ziOsxZKpWVrK3l5MMx4C/apqQ.GB5GNICy",
+    "role": "organiser"
+  },
+  {
+    "username": "volunteer",
+    "passwordHash": "$2a$10$u.bsVc18BbAZWIMGq6Kr2ukneWhuJI5kJ2EbCjYIg7oAxf5pBTsLC",
+    "role": "volunteer"
+  }
+]

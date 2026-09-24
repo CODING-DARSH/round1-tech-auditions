@@ -1,0 +1,12 @@
+[
+  { "studentId": "25BTRCL180", "name": "Param Sharma", "department": "AIML" },
+  { "studentId": "25BTRCL181", "name": "Ananya Rao", "department": "AIML" },
+  { "studentId": "25BTRCL182", "name": "Rohit Verma", "department": "CSE" },
+  { "studentId": "25BTRCL183", "name": "Sneha Iyer", "department": "CSE" },
+  { "studentId": "25BTRCL184", "name": "Kabir Singh", "department": "ECE" },
+  { "studentId": "25BTRCL185", "name": "Meera Nair", "department": "AIML" },
+  { "studentId": "25BTRCL186", "name": "Aditya Kulkarni", "department": "ISE" },
+  { "studentId": "25BTRCL187", "name": "Diya Patel", "department": "CSE" },
+  { "studentId": "25BTRCL188", "name": "Vikram Reddy", "department": "ECE" },
+  { "studentId": "25BTRCL189", "name": "Ishita Joshi", "department": "AIML" }
+]

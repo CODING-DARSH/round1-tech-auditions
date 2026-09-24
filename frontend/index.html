@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Event Attendance Tracker</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <h1 id="event-title">Event Attendance Tracker</h1>
+  <div class="who hidden" id="who-box">
+    <span id="who-label"></span>
+    <button id="logout-btn">Log out</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- LOGIN -->
+  <section id="login-view">
+    <h2>Organiser sign in</h2>
+    <div id="login-msg"></div>
+    <form id="login-form">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button class="primary" type="submit">Sign in</button>
+    </form>
+    <p class="hint">Demo accounts — organiser / Organiser@123 · volunteer / Volunteer@123</p>
+  </section>
+
+  <!-- APP -->
+  <div id="app-view" class="hidden">
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="num" id="stat-capacity">–</div><div class="label">Capacity</div></div>
+      <div class="stat-card"><div class="num" id="stat-current">–</div><div class="label">Checked in</div></div>
+      <div class="stat-card" id="stat-remaining-card"><div class="num" id="stat-remaining">–</div><div class="label">Remaining slots</div></div>
+    </div>
+
+    <section class="panel">
+      <h2>Register attendance</h2>
+      <div id="checkin-msg"></div>
+      <form id="checkin-form" class="checkin-row">
+        <input id="checkin-id" placeholder="Enter Student ID (e.g. 25BTRCL182)" autocomplete="off" />
+        <button class="primary" type="submit" style="width:auto;">Check in</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Pre-approved roster</h2>
+      <div class="controls">
+        <input id="roster-search" type="text" placeholder="Search by name or ID..." />
+        <select id="roster-dept"><option value="">All departments</option></select>
+      </div>
+      <div id="roster-table-wrap"><p class="empty">Loading roster…</p></div>
+    </section>
+
+    <section class="panel">
+      <h2>Attendance log</h2>
+      <div class="controls">
+        <input id="log-search" type="text" placeholder="Search by name or ID..." />
+        <select id="log-dept"><option value="">All departments</option></select>
+      </div>
+      <div id="log-table-wrap"><p class="empty">Loading attendance…</p></div>
+    </section>
+
+  </div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
