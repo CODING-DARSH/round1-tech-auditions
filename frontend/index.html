@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Event Attendance Tracker</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+
+  <section id="loginPage" class="page">
+    <div class="login-card">
+
+      <h1>Event Attendance</h1>
+      <p class="subtitle">Organiser Login</p>
+
+      <form id="loginForm">
+
+        <label for="username">
+          Username
+        </label>
+
+        <input
+          id="username"
+          type="text"
+          placeholder="Enter username"
+          required
+        >
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          placeholder="Enter password"
+          required
+        >
+
+        <button type="submit">
+          Login
+        </button>
+
+      </form>
+
+      <div id="loginMessage"></div>
+
+    </div>
+  </section>
+
+
+  <!-- DASHBOARD -->
+
+  <section id="dashboardPage" class="page hidden">
+
+    <header class="header">
+
+      <div>
+        <h1>Event Attendance Tracker</h1>
+        <p>Organiser Dashboard</p>
+      </div>
+
+      <button
+        id="logoutButton"
+        class="secondary-button"
+      >
+        Logout
+      </button>
+
+    </header>
+
+
+    <!-- STATISTICS -->
+
+    <section class="stats">
+
+      <div class="stat-card">
+        <span>Total Students</span>
+        <strong id="totalStudents">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Checked In</span>
+        <strong id="checkedIn">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Remaining</span>
+        <strong id="remaining">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Occupancy</span>
+        <strong id="occupancy">0%</strong>
+      </div>
+
+    </section>
+
+
+    <!-- CHECK IN -->
+
+    <section class="panel">
+
+      <h2>Student Check-In</h2>
+
+      <form id="checkInForm" class="checkin-form">
+
+        <input
+          id="studentId"
+          type="text"
+          placeholder="Enter Student ID"
+          required
+        >
+
+        <button type="submit">
+          Check In
+        </button>
+
+      </form>
+
+      <div id="checkInMessage"></div>
+
+    </section>
+
+
+    <!-- SEARCH -->
+
+    <section class="panel">
+
+      <div class="search-header">
+
+        <h2>Attendance Records</h2>
+
+        <button
+          id="refreshButton"
+          class="secondary-button"
+        >
+          Refresh
+        </button>
+
+      </div>
+
+      <div class="filters">
+
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search ID or name..."
+        >
+
+        <input
+          id="departmentInput"
+          type="text"
+          placeholder="Department..."
+        >
+
+        <select id="statusInput">
+
+          <option value="">
+            All Status
+          </option>
+
+          <option value="INSIDE">
+            INSIDE
+          </option>
+
+          <option value="NOT_ENTERED">
+            NOT ENTERED
+          </option>
+
+        </select>
+
+        <button id="searchButton">
+          Search
+        </button>
+
+      </div>
+
+
+      <div class="table-container">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="recordsBody">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </section>
+
+
+  <script src="app.js"></script>
+
+</body>
+</html>
