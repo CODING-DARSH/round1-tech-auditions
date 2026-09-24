@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Attendance Tracker – Turing Club</title>
+  <meta name="description" content="Live event attendance tracker for Turing Club. Register students, monitor capacity, and search attendance records in real time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ─────────────────────────────────────────────────── */
+    :root {
+      --bg-base: #070b14;
+      --bg-surface: #0d1320;
+      --bg-elevated: #131b2e;
+      --bg-glass: rgba(255,255,255,0.04);
+      --bg-glass-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border-active: rgba(99,179,237,0.4);
+
+      --primary: #63b3ed;
+      --primary-dark: #4299e1;
+      --accent: #9f7aea;
+      --success: #48bb78;
+      --warning: #ed8936;
+      --danger: #fc8181;
+      --muted: #718096;
+
+      --text-primary: #f0f4f8;
+      --text-secondary: #a0aec0;
+      --text-muted: #4a5568;
+
+      --gradient-hero: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a1a2e 100%);
+      --gradient-primary: linear-gradient(135deg, #4299e1, #9f7aea);
+      --gradient-success: linear-gradient(135deg, #38a169, #48bb78);
+      --gradient-card: linear-gradient(135deg, rgba(99,179,237,0.05), rgba(159,122,234,0.05));
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+
+      --shadow-glow: 0 0 30px rgba(99,179,237,0.15);
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+      --shadow-elevated: 0 8px 40px rgba(0,0,0,0.6);
+
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Reset & Base ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    ::selection { background: rgba(99,179,237,0.3); color: var(--text-primary); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-surface); }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+    /* ── Background Orbs ───────────────────────────────────────────────── */
+    .bg-orb {
+      position: fixed; border-radius: 50%;
+      pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.07;
+    }
+    .bg-orb-1 { width: 600px; height: 600px; background: #4299e1; top: -200px; left: -200px; }
+    .bg-orb-2 { width: 500px; height: 500px; background: #9f7aea; bottom: -150px; right: -150px; }
+    .bg-orb-3 { width: 300px; height: 300px; background: #48bb78; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* ── Layout ───────────────────────────────────────────────────────── */
+    #app { position: relative; z-index: 1; }
+
+    /* ── Login Page ───────────────────────────────────────────────────── */
+    #login-page {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
+    }
+    .login-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 3rem 2.5rem;
+      width: 100%; max-width: 420px;
+      box-shadow: var(--shadow-elevated);
+      animation: slideUp 0.5s ease;
+    }
+    .login-logo {
+      text-align: center; margin-bottom: 2rem;
+    }
+    .login-logo .icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 64px; height: 64px; border-radius: var(--radius-lg);
+      background: var(--gradient-primary);
+      font-size: 1.75rem; margin-bottom: 1rem;
+      box-shadow: 0 4px 20px rgba(99,179,237,0.3);
+    }
+    .login-logo h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+    .login-logo p { color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .form-input {
+      width: 100%; padding: 0.75rem 1rem;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md); color: var(--text-primary);
+      font-family: var(--font-sans); font-size: 0.95rem;
+      transition: var(--transition); outline: none;
+    }
+    .form-input:focus { border-color: var(--border-active); box-shadow: 0 0 0 3px rgba(99,179,237,0.1); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem; border-radius: var(--radius-md);
+      font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; border: none; transition: var(--transition); text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--gradient-primary); color: #fff; box-shadow: 0 4px 15px rgba(99,179,237,0.25); }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,179,237,0.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-success { background: var(--gradient-success); color: #fff; box-shadow: 0 4px 15px rgba(72,187,120,0.25); }
+    .btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-success:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+    .btn-outline:hover { background: var(--bg-glass); border-color: var(--border-active); color: var(--text-primary); }
+    .btn-danger-soft { background: rgba(252,129,129,0.1); border: 1px solid rgba(252,129,129,0.2); color: var(--danger); }
+    .btn-danger-soft:hover { background: rgba(252,129,129,0.2); }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: var(--radius-sm); }
+
+    /* ── Main App Layout ──────────────────────────────────────────────── */
+    #main-page { display: none; min-height: 100vh; flex-direction: column; }
+    #main-page.visible { display: flex; }
+
+    /* ── Header / Nav ─────────────────────────────────────────────────── */
+    .header {
+      background: rgba(13,19,32,0.8); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .header-brand { display: flex; align-items: center; gap: 0.75rem; }
+    .header-brand .dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--success);
+      box-shadow: 0 0 8px var(--success); animation: pulse 2s ease-in-out infinite;
+    }
+    .header-brand .brand-name { font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+    .header-brand .brand-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+    .header-user { display: flex; align-items: center; gap: 1rem; }
+    .user-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: 100px; padding: 0.35rem 0.75rem; font-size: 0.8rem;
+    }
+    .role-tag {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 0.15rem 0.5rem; border-radius: 100px;
+    }
+    .role-ADMIN { background: rgba(99,179,237,0.15); color: var(--primary); }
+    .role-ORGANISER { background: rgba(159,122,234,0.15); color: var(--accent); }
+
+    /* ── Nav Tabs ─────────────────────────────────────────────────────── */
+    .nav-tabs {
+      display: flex; gap: 0.25rem; padding: 1rem 2rem 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-surface);
+      overflow-x: auto; flex-shrink: 0;
+    }
+    .nav-tab {
+      padding: 0.6rem 1.25rem; border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none;
+      background: transparent; color: var(--text-muted); transition: var(--transition);
+      white-space: nowrap; position: relative;
+    }
+    .nav-tab:hover { color: var(--text-secondary); background: var(--bg-glass); }
+    .nav-tab.active {
+      color: var(--primary); background: var(--bg-elevated);
+      border: 1px solid var(--border); border-bottom: none;
+    }
+    .nav-tab .tab-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 20px; height: 20px; border-radius: 100px;
+      background: rgba(99,179,237,0.15); color: var(--primary);
+      font-size: 0.7rem; font-weight: 700; padding: 0 5px; margin-left: 0.4rem;
+    }
+
+    /* ── Tab Content ──────────────────────────────────────────────────── */
+    .tab-panel { display: none; flex: 1; padding: 2rem; overflow-y: auto; }
+    .tab-panel.active { display: block; }
+
+    /* ── Dashboard Stats Grid ─────────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+      background-image: var(--gradient-card);
+      transition: var(--transition); position: relative; overflow: hidden;
+    }
+    .stat-card:hover { border-color: var(--border-active); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--gradient-primary); opacity: 0;
+      transition: var(--transition);
+    }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .stat-value { font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+    .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+    /* ── Occupancy Bar ────────────────────────────────────────────────── */
+    .occupancy-bar-wrap { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+    .occupancy-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .occupancy-title { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .occupancy-pct { font-size: 1.5rem; font-weight: 800; }
+    .progress-track { height: 12px; background: var(--bg-elevated); border-radius: 100px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; border-radius: 100px;
+      background: var(--gradient-primary);
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .progress-fill::after {
+      content: ''; position: absolute; right: 0; top: 0; bottom: 0;
+      width: 20px; background: rgba(255,255,255,0.3); border-radius: 100px;
+    }
+
+    /* ── Recent Activity ──────────────────────────────────────────────── */
+    .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .activity-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .activity-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 0.75rem 1rem;
+      transition: var(--transition);
+      animation: slideIn 0.3s ease;
+    }
+    .activity-item:hover { border-color: var(--border-active); }
+    .activity-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--gradient-primary); display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    .activity-name { font-weight: 600; font-size: 0.9rem; }
+    .activity-meta { font-size: 0.75rem; color: var(--text-muted); }
+    .activity-id { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+    .activity-time { margin-left: auto; font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+
+    /* ── Registration Panel ───────────────────────────────────────────── */
+    .reg-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 768px) { .reg-layout { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+    }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; }
+
+    .student-preview {
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1rem; margin: 1rem 0;
+      display: none; animation: slideIn 0.2s ease;
+    }
+    .student-preview.visible { display: block; }
+    .preview-field { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+    .preview-field:last-child { border-bottom: none; }
+    .preview-key { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+    .preview-val { font-size: 0.875rem; font-weight: 600; }
+
+    .dept-badge {
+      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 100px;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .dept-CSE  { background: rgba(99,179,237,0.15); color: var(--primary); }
+    .dept-AIML { background: rgba(159,122,234,0.15); color: var(--accent); }
+    .dept-ECE  { background: rgba(237,137,54,0.15); color: var(--warning); }
+    .dept-ISE  { background: rgba(56,178,172,0.15); color: #38b2ac; }
+    .dept-IT   { background: rgba(72,187,120,0.15); color: var(--success); }
+    .dept-default { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+
+    /* ── Toast Notifications ──────────────────────────────────────────── */
+    #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
+    .toast {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.875rem 1.25rem; border-radius: var(--radius-md);
+      font-size: 0.875rem; font-weight: 500;
+      box-shadow: var(--shadow-elevated); pointer-events: all;
+      animation: toastIn 0.3s ease; max-width: 360px;
+      border: 1px solid transparent;
+    }
+    .toast-success { background: rgba(56,161,105,0.15); border-color: rgba(72,187,120,0.3); color: var(--success); }
+    .toast-error   { background: rgba(252,129,129,0.12); border-color: rgba(252,129,129,0.25); color: var(--danger); }
+    .toast-info    { background: rgba(99,179,237,0.12); border-color: rgba(99,179,237,0.25); color: var(--primary); }
+    .toast-warn    { background: rgba(237,137,54,0.12); border-color: rgba(237,137,54,0.25); color: var(--warning); }
+    .toast-icon { font-size: 1.1rem; }
+
+    /* ── Search Panel ─────────────────────────────────────────────────── */
+    .search-bar {
+      display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+    }
+    .search-input-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-icon { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+    .search-input { padding-left: 2.5rem !important; }
+
+    .filter-select {
+      padding: 0.75rem 1rem; background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md); color: var(--text-primary);
+      font-family: var(--font-sans); font-size: 0.875rem; outline: none;
+      cursor: pointer; transition: var(--transition); min-width: 140px;
+    }
+    .filter-select:focus { border-color: var(--border-active); }
+    .filter-select option { background: var(--bg-elevated); }
+
+    /* ── Data Table ───────────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .data-table th {
+      text-align: left; padding: 0.75rem 1rem; font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .data-table td { padding: 0.875rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tbody tr { transition: var(--transition); }
+    .data-table tbody tr:hover td { background: var(--bg-glass); }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.25rem 0.65rem; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .status-INSIDE { background: rgba(72,187,120,0.12); color: var(--success); border: 1px solid rgba(72,187,120,0.25); }
+    .status-NOT_ENTERED { background: rgba(113,128,150,0.1); color: var(--muted); border: 1px solid rgba(113,128,150,0.2); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .mono { font-family: var(--font-mono); font-size: 0.8rem; }
+
+    /* ── Empty State ──────────────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── Loading Spinner ──────────────────────────────────────────────── */
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+
+    /* ── Alert Banner ─────────────────────────────────────────────────── */
+    .alert { padding: 0.875rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: flex-start; gap: 0.75rem; }
+    .alert-error { background: rgba(252,129,129,0.08); border: 1px solid rgba(252,129,129,0.2); color: var(--danger); }
+    .alert-success { background: rgba(72,187,120,0.08); border: 1px solid rgba(72,187,120,0.2); color: var(--success); }
+    .alert-info { background: rgba(99,179,237,0.08); border: 1px solid rgba(99,179,237,0.2); color: var(--primary); }
+    .alert-hidden { display: none; }
+
+    /* ── Animations ───────────────────────────────────────────────────── */
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .header { padding: 0 1rem; }
+      .tab-panel { padding: 1rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .header-user .user-badge .name-text { display: none; }
+    }
+  </style>
+</head>
+<body>
+<!-- Background orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+
+<!-- Toast Container -->
+<div id="toast-container" aria-live="polite"></div>
+
+<div id="app">
+
+  <!-- ═══════════════════════════ LOGIN PAGE ═══════════════════════════ -->
+  <div id="login-page">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="icon">🎫</div>
+        <h1>Attendance Tracker</h1>
+        <p id="login-event-name">Nexus Tech Challenge 2026</p>
+      </div>
+
+      <div id="login-alert" class="alert alert-error alert-hidden" role="alert">
+        <span>⚠️</span>
+        <span id="login-alert-msg"></span>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input id="username" type="text" class="form-input" placeholder="e.g. admin" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" type="password" class="form-input" placeholder="••••••••••" autocomplete="current-password" required />
+        </div>
+        <button id="login-btn" type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem">
+          Sign In
+        </button>
+      </form>
+
+      <p style="text-align:center;margin-top:1.5rem;font-size:0.75rem;color:var(--text-muted)">
+        Demo: <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px">admin</code> / <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px">admin@turing2026</code>
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ MAIN APP ════════════════════════════ -->
+  <div id="main-page">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="dot"></div>
+        <div>
+          <div class="brand-name">🎫 Attendance Tracker</div>
+          <div class="brand-sub" id="header-event-sub">Nexus Tech Challenge</div>
+        </div>
+      </div>
+      <div class="header-user">
+        <div class="user-badge">
+          <span>👤</span>
+          <span class="name-text" id="header-user-name"></span>
+          <span id="header-role-tag" class="role-tag"></span>
+        </div>
+        <button id="logout-btn" class="btn btn-sm btn-danger-soft">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Nav Tabs -->
+    <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
+      <button class="nav-tab active" role="tab" aria-selected="true" data-tab="dashboard" id="tab-dashboard">📊 Dashboard</button>
+      <button class="nav-tab" role="tab" aria-selected="false" data-tab="register" id="tab-register">✅ Register</button>
+      <button class="nav-tab" role="tab" aria-selected="false" data-tab="search" id="tab-search">🔍 Search <span class="tab-count" id="tab-search-count">—</span></button>
+      <button class="nav-tab" role="tab" aria-selected="false" data-tab="roster" id="tab-roster">👥 Roster <span class="tab-count" id="tab-roster-count">—</span></button>
+    </nav>
+
+    <!-- ─── Dashboard Tab ──────────────────────────────────────────────── -->
+    <div id="panel-dashboard" class="tab-panel active" role="tabpanel" aria-labelledby="tab-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🎟️</div>
+          <div class="stat-value" id="stat-capacity">—</div>
+          <div class="stat-label">Total Capacity</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="stat-checkedin" style="color:var(--success)">—</div>
+          <div class="stat-label">Checked In</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🪑</div>
+          <div class="stat-value" id="stat-remaining" style="color:var(--warning)">—</div>
+          <div class="stat-label">Remaining Slots</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="stat-total-students" style="color:var(--accent)">—</div>
+          <div class="stat-label">Registered Students</div>
+        </div>
+      </div>
+
+      <!-- Occupancy bar -->
+      <div class="occupancy-bar-wrap">
+        <div class="occupancy-header">
+          <span class="occupancy-title">📈 Venue Occupancy</span>
+          <span class="occupancy-pct" id="occupancy-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem" id="occupancy-caption"></p>
+      </div>
+
+      <!-- Recent check-ins -->
+      <div class="section-title">🕐 Recent Check-ins</div>
+      <div id="recent-list" class="activity-list"></div>
+      <div id="dashboard-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">🎫</div>
+        <p>No check-ins yet. Register the first student!</p>
+      </div>
+
+      <div style="margin-top:1.5rem">
+        <button id="refresh-dashboard-btn" class="btn btn-outline btn-sm">🔄 Refresh Dashboard</button>
+      </div>
+    </div>
+
+    <!-- ─── Register Tab ────────────────────────────────────────────────── -->
+    <div id="panel-register" class="tab-panel" role="tabpanel" aria-labelledby="tab-register">
+      <div class="reg-layout">
+        <div class="card">
+          <div class="card-title">✅ Register Attendance</div>
+
+          <div id="reg-alert" class="alert alert-hidden" role="alert">
+            <span id="reg-alert-icon"></span>
+            <span id="reg-alert-msg"></span>
+          </div>
+
+          <form id="reg-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="reg-student-id">Student ID</label>
+              <input id="reg-student-id" type="text" class="form-input" placeholder="e.g. JAIN2026041"
+                     autocomplete="off" required />
+            </div>
+
+            <div id="student-preview" class="student-preview" aria-live="polite">
+              <div class="preview-field"><span class="preview-key">Name</span><span class="preview-val" id="pv-name">—</span></div>
+              <div class="preview-field"><span class="preview-key">Department</span><span class="preview-val" id="pv-dept">—</span></div>
+              <div class="preview-field"><span class="preview-key">Student ID</span><span class="preview-val mono" id="pv-id">—</span></div>
+              <div class="preview-field"><span class="preview-key">Status</span><span class="preview-val" id="pv-status">—</span></div>
+            </div>
+
+            <button id="lookup-btn" type="button" class="btn btn-outline btn-full" style="margin-bottom:0.75rem">
+              🔎 Lookup Student
+            </button>
+
+            <button id="reg-btn" type="submit" class="btn btn-success btn-full" disabled>
+              ✅ Confirm Check-In
+            </button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">ℹ️ How to Register</div>
+          <div style="font-size:0.875rem;color:var(--text-secondary);line-height:1.8">
+            <p style="margin-bottom:1rem">1. Enter the student's ID (e.g. <code class="mono" style="background:var(--bg-elevated);padding:2px 5px;border-radius:4px">JAIN2026041</code>)</p>
+            <p style="margin-bottom:1rem">2. Click <strong>Lookup Student</strong> to verify they're on the roster.</p>
+            <p style="margin-bottom:1rem">3. Confirm the details, then click <strong>Confirm Check-In</strong>.</p>
+            <p style="margin-bottom:1rem">4. Each student can only be checked in once.</p>
+            <p>5. Check-in is blocked when venue capacity is reached.</p>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:1.25rem 0" />
+          <div class="stats-grid" style="grid-template-columns:1fr 1fr;gap:0.75rem">
+            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;text-align:center">
+              <div style="font-size:1.5rem;font-weight:800;color:var(--success)" id="mini-checkedin">—</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em">Checked In</div>
+            </div>
+            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;text-align:center">
+              <div style="font-size:1.5rem;font-weight:800;color:var(--warning)" id="mini-remaining">—</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em">Remaining</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Search Tab ──────────────────────────────────────────────────── -->
+    <div id="panel-search" class="tab-panel" role="tabpanel" aria-labelledby="tab-search">
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-title">🔍 Search & Filter</div>
+        <div class="search-bar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input id="search-q" type="text" class="form-input search-input" placeholder="Search by name or student ID…" autocomplete="off" />
+          </div>
+          <select id="filter-dept" class="filter-select">
+            <option value="">All Departments</option>
+            <option value="CSE">CSE</option>
+            <option value="AIML">AIML</option>
+            <option value="ISE">ISE</option>
+            <option value="ECE">ECE</option>
+            <option value="IT">IT</option>
+          </select>
+          <select id="filter-status" class="filter-select">
+            <option value="">All Status</option>
+            <option value="INSIDE">Checked In</option>
+            <option value="NOT_ENTERED">Not Entered</option>
+          </select>
+          <button id="search-btn" class="btn btn-primary">Search</button>
+          <button id="search-clear-btn" class="btn btn-outline">Clear</button>
+        </div>
+
+        <div id="search-results-meta" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem"></div>
+
+        <div class="table-wrap">
+          <table class="data-table" aria-label="Search results">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Checked In At</th>
+              </tr>
+            </thead>
+            <tbody id="search-results-body">
+              <tr><td colspan="5" class="empty-state"><div class="empty-icon">🔍</div><p>Run a search to see results.</p></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Roster Tab ──────────────────────────────────────────────────── -->
+    <div id="panel-roster" class="tab-panel" role="tabpanel" aria-labelledby="tab-roster">
+      <div class="card">
+        <div class="card-title">👥 Pre-Registered Roster</div>
+        <div class="search-bar">
+          <div class="search-input-wrap" style="flex:1">
+            <span class="search-icon">🔍</span>
+            <input id="roster-q" type="text" class="form-input search-input" placeholder="Filter roster by name or ID…" autocomplete="off" />
+          </div>
+          <select id="roster-dept" class="filter-select">
+            <option value="">All Departments</option>
+            <option value="CSE">CSE</option>
+            <option value="AIML">AIML</option>
+            <option value="ISE">ISE</option>
+            <option value="ECE">ECE</option>
+            <option value="IT">IT</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" aria-label="Student roster">
+            <thead>
+              <tr><th>#</th><th>Student ID</th><th>Name</th><th>Department</th></tr>
+            </thead>
+            <tbody id="roster-body">
+              <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCRIPT ═══════════════════════════════ -->
+<script>
+/* ── Config ───────────────────────────────────────────────────────────── */
+const API = 'http://localhost:5000/api/v1';
+
+/* ── State ────────────────────────────────────────────────────────────── */
+let token = localStorage.getItem('att_token') || null;
+let currentUser = null;
+let rosterData = [];
+let verifiedStudent = null;
+let regInFlight = false;
+
+/* ── Utility: generate idempotency key ───────────────────────────────── */
+function genRequestId() {
+  return 'req_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+}
+
+/* ── API helper ──────────────────────────────────────────────────────── */
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API + path, { headers, ...opts });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+/* ── Toast ────────────────────────────────────────────────────────────── */
+function toast(type, msg, duration = 4000) {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️', warn: '⚠️' };
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type] || '•'}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => { el.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(() => el.remove(), 300); }, duration);
+}
+
+/* ── Show/hide alert banners ─────────────────────────────────────────── */
+function setAlert(id, msgId, iconId, type, msg) {
+  const el = document.getElementById(id);
+  const msgEl = document.getElementById(msgId);
+  const iconEl = iconId ? document.getElementById(iconId) : null;
+  el.className = `alert alert-${type}`;
+  msgEl.textContent = msg;
+  if (iconEl) iconEl.textContent = type === 'success' ? '✅' : type === 'error' ? '⚠️' : 'ℹ️';
+}
+function hideAlert(id) { document.getElementById(id).className = 'alert alert-hidden'; }
+
+/* ── Dept badge HTML ─────────────────────────────────────────────────── */
+function deptBadge(dept) {
+  const cls = ['CSE','AIML','ISE','ECE','IT'].includes(dept) ? `dept-${dept}` : 'dept-default';
+  return `<span class="dept-badge ${cls}">${dept}</span>`;
+}
+
+/* ── Status badge HTML ───────────────────────────────────────────────── */
+function statusBadge(status) {
+  return `<span class="status-badge status-${status}"><span class="status-dot"></span>${status === 'INSIDE' ? 'Checked In' : 'Not Entered'}</span>`;
+}
+
+/* ── Format timestamp ────────────────────────────────────────────────── */
+function fmtTime(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+/* ── Initials from name ──────────────────────────────────────────────── */
+function initials(name) {
+  if (!name) return '??';
+  return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+}
+
+/* ── Canonical Student ID Helper ─────────────────────────────────────── */
+function getSId(s) {
+  return s.student_id || s.id || '';
+}
+
+/* ── Auth Guard / Boot ────────────────────────────────────────────────── */
+async function boot() {
+  if (!token) { showLogin(); return; }
+  // Verify token still valid by hitting dashboard
+  const r = await api('/dashboard');
+  if (!r.ok) { token = null; localStorage.removeItem('att_token'); showLogin(); return; }
+  const userRaw = localStorage.getItem('att_user');
+  currentUser = userRaw ? JSON.parse(userRaw) : { username: 'organiser', role: 'ORGANISER', name: 'Organiser' };
+  showApp();
+  loadDashboard();
+  loadRoster();
+}
+
+function showLogin() {
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('main-page').classList.remove('visible');
+}
+
+function showApp() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('main-page').classList.add('visible');
+  document.getElementById('header-user-name').textContent = currentUser.name;
+  const roleTag = document.getElementById('header-role-tag');
+  roleTag.textContent = currentUser.role;
+  roleTag.className = `role-tag role-${currentUser.role}`;
+}
+
+/* ── Login ───────────────────────────────────────────────────────────── */
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideAlert('login-alert');
+  const btn = document.getElementById('login-btn');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!username || !password) {
+    setAlert('login-alert', 'login-alert-msg', null, 'error', 'Please enter both username and password.');
+    return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Signing in…';
+
+  const r = await api('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ username, password })
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'Sign In';
+
+  if (!r.ok) {
+    const msg = r.data?.error?.message || 'Login failed. Check credentials.';
+    setAlert('login-alert', 'login-alert-msg', null, 'error', msg);
+    return;
+  }
+
+  token = r.data.data.token;
+  currentUser = r.data.data.user;
+  localStorage.setItem('att_token', token);
+  localStorage.setItem('att_user', JSON.stringify(currentUser));
+  showApp();
+  loadDashboard();
+  loadRoster();
+});
+
+/* ── Logout ──────────────────────────────────────────────────────────── */
+document.getElementById('logout-btn').addEventListener('click', () => {
+  token = null; currentUser = null;
+  localStorage.removeItem('att_token');
+  localStorage.removeItem('att_user');
+  showLogin();
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+});
+
+/* ── Tab Navigation ──────────────────────────────────────────────────── */
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected','true');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'dashboard') loadDashboard();
+  });
+});
+
+/* ── Dashboard ───────────────────────────────────────────────────────── */
+async function loadDashboard() {
+  const r = await api('/dashboard');
+  if (!r.ok) { toast('error', 'Failed to load dashboard.'); return; }
+  const d = r.data.data;
+
+  // Set event names dynamically from data
+  const eventName = d.event?.event_name || d.event?.name || 'Nexus Tech Challenge';
+  document.getElementById('login-event-name').textContent = eventName;
+  document.getElementById('header-event-sub').textContent = eventName;
+
+  document.getElementById('stat-capacity').textContent = d.capacity;
+  document.getElementById('stat-checkedin').textContent = d.checked_in;
+  document.getElementById('stat-remaining').textContent = d.remaining_slots;
+  document.getElementById('stat-total-students').textContent = d.total_registered_students;
+  document.getElementById('occupancy-pct').textContent = d.occupancy_percentage + '%';
+  document.getElementById('progress-fill').style.width = d.occupancy_percentage + '%';
+  document.getElementById('occupancy-caption').textContent =
+    `${d.checked_in} of ${d.capacity} seats filled · ${d.remaining_slots} remaining`;
+
+  // Mini stats for register tab
+  document.getElementById('mini-checkedin').textContent = d.checked_in;
+  document.getElementById('mini-remaining').textContent = d.remaining_slots;
+
+  // Recent list
+  const list = document.getElementById('recent-list');
+  const empty = document.getElementById('dashboard-empty');
+  if (!d.recent_check_ins || d.recent_check_ins.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    list.innerHTML = d.recent_check_ins.map(r => {
+      const name = r.name || r.student_id;
+      return `
+        <div class="activity-item">
+          <div class="activity-avatar">${initials(name)}</div>
+          <div>
+            <div class="activity-name">${r.name || '—'}</div>
+            <div class="activity-meta">${r.department || ''} · <span class="mono">${r.student_id}</span></div>
+          </div>
+          <div class="activity-time">${fmtTime(r.checked_in_at)}</div>
+        </div>`;
+    }).join('');
+  }
+}
+
+document.getElementById('refresh-dashboard-btn').addEventListener('click', loadDashboard);
+
+/* ── Roster ──────────────────────────────────────────────────────────── */
+async function loadRoster() {
+  const r = await api('/students');
+  if (!r.ok) { toast('error', 'Failed to load student roster.'); return; }
+  rosterData = r.data.data.students;
+  document.getElementById('tab-roster-count').textContent = rosterData.length;
+  renderRoster(rosterData);
+}
+
+function renderRoster(students) {
+  const body = document.getElementById('roster-body');
+  if (!students.length) {
+    body.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">👥</div><p>No students found.</p></div></td></tr>`;
+    return;
+  }
+  body.innerHTML = students.map((s, i) => `
+    <tr>
+      <td style="color:var(--text-muted)">${i + 1}</td>
+      <td class="mono">${getSId(s)}</td>
+      <td>${s.name}</td>
+      <td>${deptBadge(s.department)}</td>
+    </tr>`).join('');
+}
+
+// Roster filter (client-side for speed)
+function filterRoster() {
+  const q = document.getElementById('roster-q').value.toLowerCase().trim();
+  const dept = document.getElementById('roster-dept').value.toUpperCase();
+  let filtered = rosterData;
+  if (q) filtered = filtered.filter(s => getSId(s).toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+  if (dept) filtered = filtered.filter(s => s.department.toUpperCase() === dept);
+  renderRoster(filtered);
+}
+document.getElementById('roster-q').addEventListener('input', filterRoster);
+document.getElementById('roster-dept').addEventListener('change', filterRoster);
+
+/* ── Registration ─────────────────────────────────────────────────────── */
+const regIdInput = document.getElementById('reg-student-id');
+const studentPreview = document.getElementById('student-preview');
+const regBtn = document.getElementById('reg-btn');
+
+document.getElementById('lookup-btn').addEventListener('click', async () => {
+  const id = regIdInput.value.trim().toUpperCase();
+  if (!id) { setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', 'Please enter a Student ID.'); return; }
+
+  hideAlert('reg-alert');
+  verifiedStudent = null;
+  regBtn.disabled = true;
+  studentPreview.classList.remove('visible');
+
+  // Check from roster first
+  const r = await api('/students/' + id);
+  if (!r.ok) {
+    setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', r.data?.error?.message || 'Student not found.');
+    return;
+  }
+
+  const student = r.data.data.student;
+  const sId = getSId(student);
+
+  // Check if already checked in
+  const searchR = await api('/attendance/search?q=' + sId);
+  let alreadyIn = false;
+  if (searchR.ok) {
+    const match = searchR.data.data.records.find(rec => rec.student_id.toUpperCase() === sId.toUpperCase());
+    if (match && match.status === 'INSIDE') alreadyIn = true;
+  }
+
+  verifiedStudent = student;
+  document.getElementById('pv-name').textContent = student.name;
+  document.getElementById('pv-id').textContent = sId;
+  document.getElementById('pv-dept').innerHTML = deptBadge(student.department);
+  document.getElementById('pv-status').innerHTML = statusBadge(alreadyIn ? 'INSIDE' : 'NOT_ENTERED');
+  studentPreview.classList.add('visible');
+
+  if (alreadyIn) {
+    setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', 'This student has already checked in.');
+    regBtn.disabled = true;
+  } else {
+    hideAlert('reg-alert');
+    regBtn.disabled = false;
+  }
+});
+
+document.getElementById('reg-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!verifiedStudent || regBtn.disabled || regInFlight) return;
+  regInFlight = true;
+  regBtn.disabled = true;
+  regBtn.innerHTML = '<span class="spinner"></span> Registering…';
+
+  const requestId = genRequestId();
+  const sId = getSId(verifiedStudent);
+
+  const r = await api('/attendance/register', {
+    method: 'POST',
+    body: JSON.stringify({ student_id: sId, request_id: requestId })
+  });
+
+  regInFlight = false;
+  regBtn.innerHTML = '✅ Confirm Check-In';
+
+  if (!r.ok) {
+    const errCode = r.data?.error?.code || '';
+    const msg = r.data?.error?.message || 'Registration failed.';
+    if (errCode === 'DUPLICATE_ATTENDANCE') {
+      setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', msg);
+      document.getElementById('pv-status').innerHTML = statusBadge('INSIDE');
+    } else if (errCode === 'CAPACITY_REACHED') {
+      setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', msg);
+    } else {
+      setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', msg);
+    }
+    return;
+  }
+
+  // Success
+  const d = r.data.data;
+  toast('success', `✅ ${d.name} checked in! (${d.current_count}/${d.capacity})`);
+  setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'success',
+    `${d.name} successfully checked in at ${fmtTime(d.checked_in_at)}. ID: ${d.attendance_id}`);
+  document.getElementById('pv-status').innerHTML = statusBadge('INSIDE');
+  verifiedStudent = null;
+  regIdInput.value = '';
+  regBtn.disabled = true;
+
+  // Refresh mini stats and dashboard
+  loadDashboard();
+});
+
+// Clear preview when ID changes
+regIdInput.addEventListener('input', () => {
+  studentPreview.classList.remove('visible');
+  verifiedStudent = null;
+  regBtn.disabled = true;
+  hideAlert('reg-alert');
+});
+
+/* ── Search ──────────────────────────────────────────────────────────── */
+async function runSearch() {
+  const q = document.getElementById('search-q').value.trim();
+  const dept = document.getElementById('filter-dept').value;
+  const status = document.getElementById('filter-status').value;
+
+  let params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (dept) params.set('department', dept);
+  if (status) params.set('status', status);
+
+  const r = await api('/attendance/search?' + params.toString());
+  if (!r.ok) { toast('error', 'Search failed.'); return; }
+
+  const records = r.data.data.records;
+  const count = r.data.data.count;
+  document.getElementById('tab-search-count').textContent = count;
+  document.getElementById('search-results-meta').textContent = `${count} result${count !== 1 ? 's' : ''} found`;
+
+  const body = document.getElementById('search-results-body');
+  if (!records.length) {
+    body.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🔍</div><p>No results match your search.</p></div></td></tr>`;
+    return;
+  }
+  body.innerHTML = records.map(r => `
+    <tr>
+      <td class="mono">${r.student_id}</td>
+      <td>${r.name}</td>
+      <td>${deptBadge(r.department)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td style="font-size:0.8rem;color:var(--text-muted)">${fmtTime(r.checked_in_at)}</td>
+    </tr>`).join('');
+}
+
+document.getElementById('search-btn').addEventListener('click', runSearch);
+document.getElementById('search-q').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+document.getElementById('search-clear-btn').addEventListener('click', () => {
+  document.getElementById('search-q').value = '';
+  document.getElementById('filter-dept').value = '';
+  document.getElementById('filter-status').value = '';
+  document.getElementById('search-results-body').innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🔍</div><p>Run a search to see results.</p></div></td></tr>`;
+  document.getElementById('search-results-meta').textContent = '';
+  document.getElementById('tab-search-count').textContent = '—';
+});
+
+/* ── Boot ────────────────────────────────────────────────────────────── */
+boot();
+</script>
+</body>
+</html>
