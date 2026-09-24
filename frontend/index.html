@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Authenticated event attendance tracker">
+  <title>Event Attendance Tracker</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section id="login-view" class="auth-card" aria-labelledby="login-title">
+      <p class="eyebrow">Event operations</p>
+      <h1 id="login-title">Attendance Tracker</h1>
+      <p class="muted">Sign in with an authorised event-team account.</p>
+      <form id="login-form" class="stack">
+        <label>
+          Username
+          <input id="username" name="username" autocomplete="username" required>
+        </label>
+        <label>
+          Password
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button id="login-button" type="submit">Sign in</button>
+      </form>
+      <p id="login-message" class="message" role="alert" aria-live="polite"></p>
+    </section>
+
+    <section id="app-view" class="app" hidden>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Live event operations</p>
+          <h1>Attendance Tracker</h1>
+        </div>
+        <div class="account">
+          <span id="account-label" class="role-badge"></span>
+          <button id="logout-button" class="button-secondary" type="button">Sign out</button>
+        </div>
+      </header>
+
+      <p id="app-message" class="message" role="status" aria-live="polite"></p>
+
+      <section aria-labelledby="overview-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Current snapshot</p>
+            <h2 id="overview-title">Dashboard</h2>
+          </div>
+          <button id="refresh-button" class="button-secondary" type="button">Refresh</button>
+        </div>
+        <div class="stats-grid" aria-live="polite">
+          <article class="stat"><span>Total students</span><strong id="total-students">-</strong></article>
+          <article class="stat"><span>Checked in</span><strong id="checked-in">-</strong></article>
+          <article class="stat"><span>Remaining</span><strong id="remaining">-</strong></article>
+          <article class="stat"><span>Occupancy</span><strong id="occupancy">-</strong></article>
+        </div>
+        <div class="capacity-line">
+          <div id="capacity-bar" class="capacity-bar" role="progressbar" aria-label="Event occupancy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          <span id="capacity-label">Capacity: -</span>
+        </div>
+      </section>
+
+      <div class="workspace-grid">
+        <section id="checkin-panel" class="panel" aria-labelledby="checkin-title">
+          <p class="eyebrow">Entry desk</p>
+          <h2 id="checkin-title">Register attendance</h2>
+          <p class="muted">Only students on the approved roster can enter.</p>
+          <form id="checkin-form" class="inline-form">
+            <label>
+              Student ID
+              <input id="student-id" name="student_id" placeholder="JAIN2026041" autocomplete="off" required>
+            </label>
+            <button id="checkin-button" type="submit">Check in</button>
+          </form>
+        </section>
+
+        <section class="panel" aria-labelledby="search-title">
+          <p class="eyebrow">Roster lookup</p>
+          <h2 id="search-title">Search and filter</h2>
+          <form id="search-form" class="filter-grid">
+            <label>
+              ID or name
+              <input id="search-query" name="q" placeholder="Diya or JAIN2026042">
+            </label>
+            <label>
+              Department
+              <input id="department-filter" name="department" placeholder="AIML">
+            </label>
+            <label>
+              Status
+              <select id="status-filter" name="status">
+                <option value="">All</option>
+                <option value="INSIDE">Inside</option>
+                <option value="NOT_ENTERED">Not entered</option>
+              </select>
+            </label>
+            <button id="search-button" type="submit">Apply filters</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="table-section" aria-labelledby="roster-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Combined data</p>
+            <h2 id="roster-title">Student roster</h2>
+          </div>
+          <span id="result-count" class="result-count"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Student ID</th><th>Name</th><th>Department</th><th>Status</th><th>Check-in time</th></tr>
+            </thead>
+            <tbody id="student-results"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="table-section" aria-labelledby="recent-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Audit trail</p>
+            <h2 id="recent-title">Recent check-ins</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Attendance ID</th><th>Student</th><th>Department</th><th>Timestamp</th><th>Registered by</th></tr>
+            </thead>
+            <tbody id="attendance-results"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>

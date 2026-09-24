@@ -1,0 +1,13 @@
+{
+  "name": "event-attendance-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependency-free event attendance tracker challenge implementation",
+  "scripts": {
+    "start": "node backend/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
