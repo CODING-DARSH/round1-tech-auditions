@@ -1,0 +1,30 @@
+{
+  "event": {
+    "name": "Tech Auditions 2026",
+    "capacity": 15,
+    "venue": "Main Auditorium",
+    "date": "2026-09-24"
+  },
+  "students": [
+    { "student_id": "STU1001", "name": "Rahul Sharma",    "department": "CS",    "year": 2, "email": "rahul.sharma@college.edu"    },
+    { "student_id": "STU1002", "name": "Priya Patel",     "department": "AIML",  "year": 3, "email": "priya.patel@college.edu"     },
+    { "student_id": "STU1003", "name": "Arjun Mehta",     "department": "ECE",   "year": 2, "email": "arjun.mehta@college.edu"     },
+    { "student_id": "STU1004", "name": "Sneha Reddy",     "department": "MECH",  "year": 4, "email": "sneha.reddy@college.edu"     },
+    { "student_id": "STU1005", "name": "Vikram Singh",    "department": "CIVIL", "year": 3, "email": "vikram.singh@college.edu"    },
+    { "student_id": "STU1006", "name": "Ananya Krishnan", "department": "AIML",  "year": 2, "email": "ananya.krishnan@college.edu" },
+    { "student_id": "STU1007", "name": "Rohan Das",       "department": "CS",    "year": 1, "email": "rohan.das@college.edu"       },
+    { "student_id": "STU1008", "name": "Kavya Nair",      "department": "ECE",   "year": 4, "email": "kavya.nair@college.edu"      },
+    { "student_id": "STU1009", "name": "Aditya Joshi",    "department": "MECH",  "year": 2, "email": "aditya.joshi@college.edu"    },
+    { "student_id": "STU1010", "name": "Pooja Iyer",      "department": "CS",    "year": 3, "email": "pooja.iyer@college.edu"      },
+    { "student_id": "STU1011", "name": "Karthik Rao",     "department": "AIML",  "year": 4, "email": "karthik.rao@college.edu"     },
+    { "student_id": "STU1012", "name": "Divya Menon",     "department": "CIVIL", "year": 1, "email": "divya.menon@college.edu"     },
+    { "student_id": "STU1013", "name": "Suresh Kumar",    "department": "ECE",   "year": 3, "email": "suresh.kumar@college.edu"    },
+    { "student_id": "STU1014", "name": "Meera Banerjee",  "department": "CS",    "year": 2, "email": "meera.banerjee@college.edu"  },
+    { "student_id": "STU1015", "name": "Nikhil Gupta",    "department": "MECH",  "year": 1, "email": "nikhil.gupta@college.edu"    },
+    { "student_id": "STU1016", "name": "Lakshmi Venkat",  "department": "AIML",  "year": 3, "email": "lakshmi.venkat@college.edu"  },
+    { "student_id": "STU1017", "name": "Amit Tiwari",     "department": "CS",    "year": 4, "email": "amit.tiwari@college.edu"     },
+    { "student_id": "STU1018", "name": "Ritu Saxena",     "department": "CIVIL", "year": 2, "email": "ritu.saxena@college.edu"     },
+    { "student_id": "STU1019", "name": "Harish Pillai",   "department": "ECE",   "year": 1, "email": "harish.pillai@college.edu"   },
+    { "student_id": "STU1020", "name": "Sanya Chopra",    "department": "MECH",  "year": 3, "email": "sanya.chopra@college.edu"    }
+  ]
+}

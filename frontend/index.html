@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Attendance Tracker — Tech Auditions 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════ LOGIN PAGE ═══════════════════════ -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon">🎟️</div>
+      <h1>Attendance Tracker</h1>
+      <p>Tech Auditions 2026 — Organiser Portal</p>
+    </div>
+
+    <div id="login-alert" class="alert alert-error"></div>
+
+    <form id="login-form" autocomplete="off">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" placeholder="Enter username" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter password" required autocomplete="current-password" />
+      </div>
+      <button id="login-btn" class="btn btn-primary btn-full" type="submit">Sign In</button>
+    </form>
+
+    <div class="demo-creds">
+      <h4>Demo Credentials</h4>
+      <table>
+        <tr><td>Admin</td>    <td><b>admin</b> / Admin@123</td></tr>
+        <tr><td>Organizer</td><td><b>organizer1</b> / Org@2026</td></tr>
+        <tr><td>Viewer</td>   <td><b>viewer1</b> / View@2026</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MAIN APP ══════════════════════════ -->
+<div id="app-page">
+
+  <!-- Top bar -->
+  <nav class="topbar">
+    <div class="topbar-brand">🎟️ <span>Attendance</span> Tracker</div>
+    <div class="topbar-right">
+      <div class="user-badge">
+        <span id="nav-name">—</span>
+        <span id="nav-role" class="role-tag">—</span>
+      </div>
+      <button class="btn btn-ghost" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="main-container">
+
+    <!-- ── Stats row ── -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value" id="s-total">—</div>
+        <div class="stat-sub">On the roster</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Checked In</div>
+        <div class="stat-value" id="s-checked">—</div>
+        <div class="stat-sub">INSIDE the venue</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-label">Not Entered</div>
+        <div class="stat-value" id="s-pending">—</div>
+        <div class="stat-sub">Yet to arrive</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Remaining Slots</div>
+        <div class="stat-value" id="s-remaining">—</div>
+        <div class="stat-sub" id="s-cap-sub">of — capacity</div>
+      </div>
+      <div class="stat-card teal">
+        <div class="stat-label">Occupancy</div>
+        <div class="stat-value" id="s-occ">—%</div>
+        <div class="occ-bar"><div class="occ-fill" id="occ-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- ── Two-column layout ── -->
+    <div class="content-grid">
+
+      <!-- LEFT: Register + Department chart -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+        <!-- Register panel -->
+        <div class="panel" id="register-panel">
+          <div class="panel-title">✅ Check-In Student</div>
+
+          <div id="reg-alert" class="alert" style="margin-bottom:.8rem;"></div>
+
+          <form class="register-form" id="reg-form" autocomplete="off">
+            <div class="form-group">
+              <label>Student ID</label>
+              <div class="form-row">
+                <input id="reg-student-id" type="text" placeholder="e.g. STU1001" />
+                <button id="reg-btn" class="btn btn-success" type="submit">Check In</button>
+              </div>
+            </div>
+          </form>
+
+          <div style="margin-top:.6rem;">
+            <a href="#" onclick="quickFill('STU1001')" style="color:var(--muted);font-size:.78rem;margin-right:.5rem;">STU1001</a>
+            <a href="#" onclick="quickFill('STU1002')" style="color:var(--muted);font-size:.78rem;margin-right:.5rem;">STU1002</a>
+            <a href="#" onclick="quickFill('STU1010')" style="color:var(--muted);font-size:.78rem;">STU1010</a>
+            <span style="color:var(--muted);font-size:.75rem;"> ← quick fill</span>
+          </div>
+        </div>
+
+        <!-- Department breakdown -->
+        <div class="panel">
+          <div class="panel-title">📊 Dept Breakdown</div>
+          <div id="dept-chart" class="dept-bar-wrap">
+            <div class="empty-state"><div class="icon">📊</div><p>No check-ins yet</p></div>
+          </div>
+        </div>
+
+        <!-- Recent check-ins -->
+        <div class="panel">
+          <div class="panel-title">🕒 Recent Check-Ins</div>
+          <div id="recent-list">
+            <div class="empty-state"><div class="icon">🕒</div><p>No recent activity</p></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Search + Attendance table -->
+      <div class="panel">
+        <div class="panel-title">📋 Attendance Records</div>
+
+        <!-- Search bar -->
+        <div class="search-bar">
+          <input id="search-input" type="text" placeholder="Search by name, ID…" />
+          <button class="btn btn-primary" onclick="runSearch()">Search</button>
+          <button class="btn btn-ghost" onclick="clearSearch()">Clear</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-row">
+          <select id="filter-dept" onchange="runSearch()">
+            <option value="">All Departments</option>
+            <option value="CS">CS</option>
+            <option value="AIML">AIML</option>
+            <option value="ECE">ECE</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+          </select>
+          <select id="filter-status" onchange="runSearch()">
+            <option value="">All Statuses</option>
+            <option value="INSIDE">INSIDE</option>
+            <option value="NOT_ENTERED">NOT ENTERED</option>
+          </select>
+          <button class="btn btn-ghost" onclick="loadAttendance()" style="font-size:.8rem;">↺ Refresh</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap" id="table-wrap">
+          <div class="empty-state"><div class="icon">📋</div><p>Loading records…</p></div>
+        </div>
+
+        <div id="table-count" style="margin-top:.6rem;font-size:.78rem;color:var(--muted);"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
