@@ -3,1048 +3,1477 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Event Attendance Tracker – Turing Club</title>
-  <meta name="description" content="Live event attendance tracker for Turing Club. Register students, monitor capacity, and search attendance records in real time." />
+  <title>Event Attendance Tracker - Turing Club</title>
+  <meta name="description" content="Event attendance tracking platform for Turing Club. Register students, monitor venue capacity, and search attendance records in real time." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    /* ── Design Tokens ─────────────────────────────────────────────────── */
+    /* ── Bright Theme Tokens ───────────────────────────────────────────── */
     :root {
-      --bg-base: #070b14;
-      --bg-surface: #0d1320;
-      --bg-elevated: #131b2e;
-      --bg-glass: rgba(255,255,255,0.04);
-      --bg-glass-hover: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.08);
-      --border-active: rgba(99,179,237,0.4);
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-muted: #f1f5f9;
+      --bg-subtle: #f8fafc;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
 
-      --primary: #63b3ed;
-      --primary-dark: #4299e1;
-      --accent: #9f7aea;
-      --success: #48bb78;
-      --warning: #ed8936;
-      --danger: #fc8181;
-      --muted: #718096;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
 
-      --text-primary: #f0f4f8;
-      --text-secondary: #a0aec0;
-      --text-muted: #4a5568;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --success-border: #bbf7d0;
 
-      --gradient-hero: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a1a2e 100%);
-      --gradient-primary: linear-gradient(135deg, #4299e1, #9f7aea);
-      --gradient-success: linear-gradient(135deg, #38a169, #48bb78);
-      --gradient-card: linear-gradient(135deg, rgba(99,179,237,0.05), rgba(159,122,234,0.05));
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --warning-border: #fde68a;
 
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --danger-border: #fecaca;
 
-      --shadow-glow: 0 0 30px rgba(99,179,237,0.15);
-      --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
-      --shadow-elevated: 0 8px 40px rgba(0,0,0,0.6);
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
 
-      --font-sans: 'Inter', sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-
-      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: all 0.15s ease-in-out;
     }
 
-    /* ── Reset & Base ──────────────────────────────────────────────────── */
+    /* ── Reset & Typography ────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
     body {
       font-family: var(--font-sans);
-      background: var(--bg-base);
-      color: var(--text-primary);
+      background-color: var(--bg-base);
+      color: var(--text-main);
       min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
-    ::selection { background: rgba(99,179,237,0.3); color: var(--text-primary); }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-surface); }
-    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
 
-    /* ── Background Orbs ───────────────────────────────────────────────── */
-    .bg-orb {
-      position: fixed; border-radius: 50%;
-      pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.07;
+    /* ── SVG Icons ─────────────────────────────────────────────────────── */
+    .icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      flex-shrink: 0;
     }
-    .bg-orb-1 { width: 600px; height: 600px; background: #4299e1; top: -200px; left: -200px; }
-    .bg-orb-2 { width: 500px; height: 500px; background: #9f7aea; bottom: -150px; right: -150px; }
-    .bg-orb-3 { width: 300px; height: 300px; background: #48bb78; top: 50%; left: 50%; transform: translate(-50%,-50%); }
 
-    /* ── Layout ───────────────────────────────────────────────────────── */
-    #app { position: relative; z-index: 1; }
-
-    /* ── Login Page ───────────────────────────────────────────────────── */
+    /* ── Login View ────────────────────────────────────────────────────── */
     #login-page {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
     }
-    .login-card {
+    .login-container {
+      width: 100%;
+      max-width: 440px;
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 3rem 2.5rem;
-      width: 100%; max-width: 420px;
-      box-shadow: var(--shadow-elevated);
-      animation: slideUp 0.5s ease;
+      padding: 2.5rem 2.25rem;
+      box-shadow: var(--shadow-lg);
     }
-    .login-logo {
-      text-align: center; margin-bottom: 2rem;
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
     }
-    .login-logo .icon {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 64px; height: 64px; border-radius: var(--radius-lg);
-      background: var(--gradient-primary);
-      font-size: 1.75rem; margin-bottom: 1rem;
-      box-shadow: 0 4px 20px rgba(99,179,237,0.3);
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      color: var(--primary);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
     }
-    .login-logo h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .login-logo p { color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem; }
+    .login-header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-main);
+    }
+    .login-header p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 0.35rem;
+    }
 
-    .form-group { margin-bottom: 1.25rem; }
-    .form-label { display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    /* ── Form Elements ─────────────────────────────────────────────────── */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+    }
     .form-input {
-      width: 100%; padding: 0.75rem 1rem;
-      background: var(--bg-elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-md); color: var(--text-primary);
-      font-family: var(--font-sans); font-size: 0.95rem;
-      transition: var(--transition); outline: none;
+      width: 100%;
+      padding: 0.7rem 0.95rem;
+      font-family: var(--font-sans);
+      font-size: 0.925rem;
+      color: var(--text-main);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: var(--transition);
     }
-    .form-input:focus { border-color: var(--border-active); box-shadow: 0 0 0 3px rgba(99,179,237,0.1); }
-    .form-input::placeholder { color: var(--text-muted); }
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
 
+    /* ── Buttons ───────────────────────────────────────────────────────── */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-      padding: 0.75rem 1.5rem; border-radius: var(--radius-md);
-      font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600;
-      cursor: pointer; border: none; transition: var(--transition); text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
       white-space: nowrap;
     }
-    .btn-primary { background: var(--gradient-primary); color: #fff; box-shadow: 0 4px 15px rgba(99,179,237,0.25); }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,179,237,0.35); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-success { background: var(--gradient-success); color: #fff; box-shadow: 0 4px 15px rgba(72,187,120,0.25); }
-    .btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-success:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
-    .btn-outline:hover { background: var(--bg-glass); border-color: var(--border-active); color: var(--text-primary); }
-    .btn-danger-soft { background: rgba(252,129,129,0.1); border: 1px solid rgba(252,129,129,0.2); color: var(--danger); }
-    .btn-danger-soft:hover { background: rgba(252,129,129,0.2); }
-    .btn-full { width: 100%; }
-    .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: var(--radius-sm); }
-
-    /* ── Main App Layout ──────────────────────────────────────────────── */
-    #main-page { display: none; min-height: 100vh; flex-direction: column; }
-    #main-page.visible { display: flex; }
-
-    /* ── Header / Nav ─────────────────────────────────────────────────── */
-    .header {
-      background: rgba(13,19,32,0.8); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
-      height: 64px; position: sticky; top: 0; z-index: 100;
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
-    .header-brand { display: flex; align-items: center; gap: 0.75rem; }
-    .header-brand .dot {
-      width: 10px; height: 10px; border-radius: 50%; background: var(--success);
-      box-shadow: 0 0 8px var(--success); animation: pulse 2s ease-in-out infinite;
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
     }
-    .header-brand .brand-name { font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
-    .header-brand .brand-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+    }
+    .btn-success {
+      background-color: var(--success);
+      color: #ffffff;
+    }
+    .btn-success:hover:not(:disabled) {
+      background-color: #15803d;
+    }
+    .btn-outline {
+      background-color: var(--bg-surface);
+      border-color: var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-outline:hover:not(:disabled) {
+      background-color: var(--bg-muted);
+      color: var(--text-main);
+    }
+    .btn-danger-outline {
+      background-color: var(--danger-light);
+      border-color: var(--danger-border);
+      color: var(--danger);
+    }
+    .btn-danger-outline:hover:not(:disabled) {
+      background-color: #fee2e2;
+    }
+    .btn-full {
+      width: 100%;
+    }
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.8rem;
+    }
 
-    .header-user { display: flex; align-items: center; gap: 1rem; }
-    .user-badge {
-      display: flex; align-items: center; gap: 0.5rem;
-      background: var(--bg-elevated); border: 1px solid var(--border);
-      border-radius: 100px; padding: 0.35rem 0.75rem; font-size: 0.8rem;
+    /* ── Main Application Layout ───────────────────────────────────────── */
+    #main-page {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    .role-tag {
-      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-      padding: 0.15rem 0.5rem; border-radius: 100px;
+    #main-page.visible {
+      display: flex;
     }
-    .role-ADMIN { background: rgba(99,179,237,0.15); color: var(--primary); }
-    .role-ORGANISER { background: rgba(159,122,234,0.15); color: var(--accent); }
 
-    /* ── Nav Tabs ─────────────────────────────────────────────────────── */
-    .nav-tabs {
-      display: flex; gap: 0.25rem; padding: 1rem 2rem 0;
-      border-bottom: 1px solid var(--border);
+    /* ── Navigation Header ─────────────────────────────────────────────── */
+    .app-header {
       background: var(--bg-surface);
-      overflow-x: auto; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
     }
-    .nav-tab {
-      padding: 0.6rem 1.25rem; border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-      font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none;
-      background: transparent; color: var(--text-muted); transition: var(--transition);
-      white-space: nowrap; position: relative;
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
     }
-    .nav-tab:hover { color: var(--text-secondary); background: var(--bg-glass); }
-    .nav-tab.active {
-      color: var(--primary); background: var(--bg-elevated);
-      border: 1px solid var(--border); border-bottom: none;
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
     }
-    .nav-tab .tab-count {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 20px; height: 20px; border-radius: 100px;
-      background: rgba(99,179,237,0.15); color: var(--primary);
-      font-size: 0.7rem; font-weight: 700; padding: 0 5px; margin-left: 0.4rem;
+    .brand-text h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
     }
 
-    /* ── Tab Content ──────────────────────────────────────────────────── */
-    .tab-panel { display: none; flex: 1; padding: 2rem; overflow-y: auto; }
-    .tab-panel.active { display: block; }
-
-    /* ── Dashboard Stats Grid ─────────────────────────────────────────── */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card {
-      background: var(--bg-surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 1.5rem;
-      background-image: var(--gradient-card);
-      transition: var(--transition); position: relative; overflow: hidden;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
-    .stat-card:hover { border-color: var(--border-active); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
-    .stat-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: var(--gradient-primary); opacity: 0;
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--bg-muted);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      font-size: 0.825rem;
+    }
+    .user-pill-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .role-badge {
+      font-size: 0.675rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .role-ADMIN {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+    }
+    .role-ORGANISER {
+      background: #f5f3ff;
+      color: #7c3aed;
+      border: 1px solid #ddd6fe;
+    }
+
+    /* ── Sub Navigation Tabs ───────────────────────────────────────────── */
+    .app-nav {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .nav-item {
+      padding: 0.85rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       transition: var(--transition);
     }
-    .stat-card:hover::before { opacity: 1; }
-    .stat-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
-    .stat-value { font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
-    .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
-    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
-
-    /* ── Occupancy Bar ────────────────────────────────────────────────── */
-    .occupancy-bar-wrap { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
-    .occupancy-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .occupancy-title { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
-    .occupancy-pct { font-size: 1.5rem; font-weight: 800; }
-    .progress-track { height: 12px; background: var(--bg-elevated); border-radius: 100px; overflow: hidden; }
-    .progress-fill {
-      height: 100%; border-radius: 100px;
-      background: var(--gradient-primary);
-      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
+    .nav-item:hover {
+      color: var(--primary);
     }
-    .progress-fill::after {
-      content: ''; position: absolute; right: 0; top: 0; bottom: 0;
-      width: 20px; background: rgba(255,255,255,0.3); border-radius: 100px;
+    .nav-item.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .counter-pill {
+      padding: 0.1rem 0.45rem;
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+      font-size: 0.725rem;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    .nav-item.active .counter-pill {
+      background: var(--primary-light);
+      color: var(--primary);
     }
 
-    /* ── Recent Activity ──────────────────────────────────────────────── */
-    .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-    .activity-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .activity-item {
-      display: flex; align-items: center; gap: 1rem;
-      background: var(--bg-elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-md); padding: 0.75rem 1rem;
-      transition: var(--transition);
-      animation: slideIn 0.3s ease;
+    /* ── Main Content Container ────────────────────────────────────────── */
+    .app-content {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
     }
-    .activity-item:hover { border-color: var(--border-active); }
-    .activity-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--gradient-primary); display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    .tab-content {
+      display: none;
     }
-    .activity-name { font-weight: 600; font-size: 0.9rem; }
-    .activity-meta { font-size: 0.75rem; color: var(--text-muted); }
-    .activity-id { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
-    .activity-time { margin-left: auto; font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+    .tab-content.active {
+      display: block;
+    }
 
-    /* ── Registration Panel ───────────────────────────────────────────── */
-    .reg-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    @media (max-width: 768px) { .reg-layout { grid-template-columns: 1fr; } }
+    /* ── Metrics Cards Grid ────────────────────────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .metric-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+    }
+    .metric-number {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+    .metric-meta {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
 
+    /* ── Occupancy Progress Section ────────────────────────────────────── */
     .card {
-      background: var(--bg-surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 1.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.75rem;
     }
-    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; }
-
-    .student-preview {
-      background: var(--bg-elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-md); padding: 1rem; margin: 1rem 0;
-      display: none; animation: slideIn 0.2s ease;
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
     }
-    .student-preview.visible { display: block; }
-    .preview-field { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
-    .preview-field:last-child { border-bottom: none; }
-    .preview-key { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-    .preview-val { font-size: 0.875rem; font-weight: 600; }
-
-    .dept-badge {
-      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 100px;
-      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
     }
-    .dept-CSE  { background: rgba(99,179,237,0.15); color: var(--primary); }
-    .dept-AIML { background: rgba(159,122,234,0.15); color: var(--accent); }
-    .dept-ECE  { background: rgba(237,137,54,0.15); color: var(--warning); }
-    .dept-ISE  { background: rgba(56,178,172,0.15); color: #38b2ac; }
-    .dept-IT   { background: rgba(72,187,120,0.15); color: var(--success); }
-    .dept-default { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
-
-    /* ── Toast Notifications ──────────────────────────────────────────── */
-    #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
-    .toast {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.875rem 1.25rem; border-radius: var(--radius-md);
-      font-size: 0.875rem; font-weight: 500;
-      box-shadow: var(--shadow-elevated); pointer-events: all;
-      animation: toastIn 0.3s ease; max-width: 360px;
-      border: 1px solid transparent;
+    .occupancy-percentage {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
     }
-    .toast-success { background: rgba(56,161,105,0.15); border-color: rgba(72,187,120,0.3); color: var(--success); }
-    .toast-error   { background: rgba(252,129,129,0.12); border-color: rgba(252,129,129,0.25); color: var(--danger); }
-    .toast-info    { background: rgba(99,179,237,0.12); border-color: rgba(99,179,237,0.25); color: var(--primary); }
-    .toast-warn    { background: rgba(237,137,54,0.12); border-color: rgba(237,137,54,0.25); color: var(--warning); }
-    .toast-icon { font-size: 1.1rem; }
-
-    /* ── Search Panel ─────────────────────────────────────────────────── */
-    .search-bar {
-      display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+    .progress-bar-bg {
+      height: 10px;
+      background: var(--bg-muted);
+      border-radius: 9999px;
+      overflow: hidden;
     }
-    .search-input-wrap { position: relative; flex: 1; min-width: 200px; }
-    .search-icon { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
-    .search-input { padding-left: 2.5rem !important; }
-
-    .filter-select {
-      padding: 0.75rem 1rem; background: var(--bg-elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-md); color: var(--text-primary);
-      font-family: var(--font-sans); font-size: 0.875rem; outline: none;
-      cursor: pointer; transition: var(--transition); min-width: 140px;
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 9999px;
+      transition: width 0.5s ease-out;
     }
-    .filter-select:focus { border-color: var(--border-active); }
-    .filter-select option { background: var(--bg-elevated); }
-
-    /* ── Data Table ───────────────────────────────────────────────────── */
-    .table-wrap { overflow-x: auto; }
-    .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    .data-table th {
-      text-align: left; padding: 0.75rem 1rem; font-size: 0.72rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
-      border-bottom: 1px solid var(--border); white-space: nowrap;
+    .occupancy-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.65rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
     }
-    .data-table td { padding: 0.875rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-    .data-table tr:last-child td { border-bottom: none; }
-    .data-table tbody tr { transition: var(--transition); }
-    .data-table tbody tr:hover td { background: var(--bg-glass); }
 
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.25rem 0.65rem; border-radius: 100px;
-      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    /* ── Registration Grid Layout ──────────────────────────────────────── */
+    .register-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.5rem;
     }
-    .status-INSIDE { background: rgba(72,187,120,0.12); color: var(--success); border: 1px solid rgba(72,187,120,0.25); }
-    .status-NOT_ENTERED { background: rgba(113,128,150,0.1); color: var(--muted); border: 1px solid rgba(113,128,150,0.2); }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    @media (max-width: 860px) {
+      .register-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
-    .mono { font-family: var(--font-mono); font-size: 0.8rem; }
+    /* ── Student Preview Box ───────────────────────────────────────────── */
+    .preview-box {
+      display: none;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .preview-box.visible {
+      display: block;
+    }
+    .preview-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+    .preview-row:last-child {
+      border-bottom: none;
+    }
+    .preview-key {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .preview-val {
+      font-weight: 600;
+      color: var(--text-main);
+    }
 
-    /* ── Empty State ──────────────────────────────────────────────────── */
-    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
-    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
-    .empty-state p { font-size: 0.9rem; }
+    /* ── Department Badges ─────────────────────────────────────────────── */
+    .dept-tag {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.725rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .dept-AIML { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+    .dept-CSE  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .dept-ISE  { background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+    .dept-ECE  { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .dept-IT   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .dept-default { background: var(--bg-muted); color: var(--text-secondary); border: 1px solid var(--border); }
 
-    /* ── Loading Spinner ──────────────────────────────────────────────── */
+    /* ── Status Badges ─────────────────────────────────────────────────── */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .status-INSIDE {
+      background: var(--success-light);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+    .status-NOT_ENTERED {
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .status-bullet {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Search & Filter Controls ──────────────────────────────────────── */
+    .filter-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 220px;
+    }
+    .select-wrap {
+      min-width: 150px;
+    }
+    .select-control {
+      width: 100%;
+      padding: 0.7rem 0.95rem;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--text-main);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      cursor: pointer;
+    }
+    .select-control:focus {
+      border-color: var(--border-focus);
+    }
+
+    /* ── Clean Data Tables ─────────────────────────────────────────────── */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .clean-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    .clean-table th {
+      background: var(--bg-muted);
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .clean-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    .clean-table tr:last-child td {
+      border-bottom: none;
+    }
+    .clean-table tbody tr:hover {
+      background: var(--bg-subtle);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+    }
+
+    /* ── Alert Notices ─────────────────────────────────────────────────── */
+    .alert-box {
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .alert-box.hidden {
+      display: none;
+    }
+    .alert-error {
+      background: var(--danger-light);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+    }
+    .alert-success {
+      background: var(--success-light);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+    }
+    .alert-info {
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      color: var(--primary);
+    }
+
+    /* ── Activity Stream ───────────────────────────────────────────────── */
+    .activity-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .activity-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .activity-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .activity-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.825rem;
+      font-weight: 700;
+    }
+    .activity-primary {
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+    .activity-secondary {
+      font-size: 0.775rem;
+      color: var(--text-secondary);
+    }
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* ── Empty State ───────────────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── Spinner ───────────────────────────────────────────────────────── */
     .spinner {
-      display: inline-block; width: 18px; height: 18px;
-      border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff;
-      border-radius: 50%; animation: spin 0.7s linear infinite;
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    /* ── Alert Banner ─────────────────────────────────────────────────── */
-    .alert { padding: 0.875rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: flex-start; gap: 0.75rem; }
-    .alert-error { background: rgba(252,129,129,0.08); border: 1px solid rgba(252,129,129,0.2); color: var(--danger); }
-    .alert-success { background: rgba(72,187,120,0.08); border: 1px solid rgba(72,187,120,0.2); color: var(--success); }
-    .alert-info { background: rgba(99,179,237,0.08); border: 1px solid rgba(99,179,237,0.2); color: var(--primary); }
-    .alert-hidden { display: none; }
+    /* ── Toast Notifications ───────────────────────────────────────────── */
+    #toast-wrap {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .toast-msg {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      box-shadow: var(--shadow-lg);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+      pointer-events: all;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .toast-msg.success { border-left: 4px solid var(--success); }
+    .toast-msg.error { border-left: 4px solid var(--danger); }
+    .toast-msg.info { border-left: 4px solid var(--primary); }
 
-    /* ── Animations ───────────────────────────────────────────────────── */
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    /* ── Responsive ──────────────────────────────────────────────────── */
-    @media (max-width: 640px) {
-      .header { padding: 0 1rem; }
-      .tab-panel { padding: 1rem; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .header-user .user-badge .name-text { display: none; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-<!-- Background orbs -->
-<div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
 
-<!-- Toast Container -->
-<div id="toast-container" aria-live="polite"></div>
+<div id="toast-wrap" aria-live="polite"></div>
 
-<div id="app">
-
-  <!-- ═══════════════════════════ LOGIN PAGE ═══════════════════════════ -->
-  <div id="login-page">
-    <div class="login-card">
-      <div class="login-logo">
-        <div class="icon">🎫</div>
-        <h1>Attendance Tracker</h1>
-        <p id="login-event-name">Nexus Tech Challenge 2026</p>
-      </div>
-
-      <div id="login-alert" class="alert alert-error alert-hidden" role="alert">
-        <span>⚠️</span>
-        <span id="login-alert-msg"></span>
-      </div>
-
-      <form id="login-form" novalidate>
-        <div class="form-group">
-          <label class="form-label" for="username">Username</label>
-          <input id="username" type="text" class="form-input" placeholder="e.g. admin" autocomplete="username" required />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input id="password" type="password" class="form-input" placeholder="••••••••••" autocomplete="current-password" required />
-        </div>
-        <button id="login-btn" type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem">
-          Sign In
-        </button>
-      </form>
-
-      <p style="text-align:center;margin-top:1.5rem;font-size:0.75rem;color:var(--text-muted)">
-        Demo: <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px">admin</code> / <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px">admin@turing2026</code>
-      </p>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════ MAIN APP ════════════════════════════ -->
-  <div id="main-page">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-brand">
-        <div class="dot"></div>
-        <div>
-          <div class="brand-name">🎫 Attendance Tracker</div>
-          <div class="brand-sub" id="header-event-sub">Nexus Tech Challenge</div>
-        </div>
-      </div>
-      <div class="header-user">
-        <div class="user-badge">
-          <span>👤</span>
-          <span class="name-text" id="header-user-name"></span>
-          <span id="header-role-tag" class="role-tag"></span>
-        </div>
-        <button id="logout-btn" class="btn btn-sm btn-danger-soft">Sign Out</button>
-      </div>
-    </header>
-
-    <!-- Nav Tabs -->
-    <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
-      <button class="nav-tab active" role="tab" aria-selected="true" data-tab="dashboard" id="tab-dashboard">📊 Dashboard</button>
-      <button class="nav-tab" role="tab" aria-selected="false" data-tab="register" id="tab-register">✅ Register</button>
-      <button class="nav-tab" role="tab" aria-selected="false" data-tab="search" id="tab-search">🔍 Search <span class="tab-count" id="tab-search-count">—</span></button>
-      <button class="nav-tab" role="tab" aria-selected="false" data-tab="roster" id="tab-roster">👥 Roster <span class="tab-count" id="tab-roster-count">—</span></button>
-    </nav>
-
-    <!-- ─── Dashboard Tab ──────────────────────────────────────────────── -->
-    <div id="panel-dashboard" class="tab-panel active" role="tabpanel" aria-labelledby="tab-dashboard">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">🎟️</div>
-          <div class="stat-value" id="stat-capacity">—</div>
-          <div class="stat-label">Total Capacity</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-value" id="stat-checkedin" style="color:var(--success)">—</div>
-          <div class="stat-label">Checked In</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🪑</div>
-          <div class="stat-value" id="stat-remaining" style="color:var(--warning)">—</div>
-          <div class="stat-label">Remaining Slots</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-value" id="stat-total-students" style="color:var(--accent)">—</div>
-          <div class="stat-label">Registered Students</div>
-        </div>
-      </div>
-
-      <!-- Occupancy bar -->
-      <div class="occupancy-bar-wrap">
-        <div class="occupancy-header">
-          <span class="occupancy-title">📈 Venue Occupancy</span>
-          <span class="occupancy-pct" id="occupancy-pct">0%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-        </div>
-        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem" id="occupancy-caption"></p>
-      </div>
-
-      <!-- Recent check-ins -->
-      <div class="section-title">🕐 Recent Check-ins</div>
-      <div id="recent-list" class="activity-list"></div>
-      <div id="dashboard-empty" class="empty-state" style="display:none">
-        <div class="empty-icon">🎫</div>
-        <p>No check-ins yet. Register the first student!</p>
-      </div>
-
-      <div style="margin-top:1.5rem">
-        <button id="refresh-dashboard-btn" class="btn btn-outline btn-sm">🔄 Refresh Dashboard</button>
-      </div>
+<!-- ═══════════════════════════ LOGIN VIEW ═══════════════════════════ -->
+<div id="login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-badge">Turing Club Auditions</div>
+      <h1>Attendance Portal</h1>
+      <p id="login-event-title">Nexus Tech Challenge</p>
     </div>
 
-    <!-- ─── Register Tab ────────────────────────────────────────────────── -->
-    <div id="panel-register" class="tab-panel" role="tabpanel" aria-labelledby="tab-register">
-      <div class="reg-layout">
-        <div class="card">
-          <div class="card-title">✅ Register Attendance</div>
-
-          <div id="reg-alert" class="alert alert-hidden" role="alert">
-            <span id="reg-alert-icon"></span>
-            <span id="reg-alert-msg"></span>
-          </div>
-
-          <form id="reg-form" novalidate>
-            <div class="form-group">
-              <label class="form-label" for="reg-student-id">Student ID</label>
-              <input id="reg-student-id" type="text" class="form-input" placeholder="e.g. JAIN2026041"
-                     autocomplete="off" required />
-            </div>
-
-            <div id="student-preview" class="student-preview" aria-live="polite">
-              <div class="preview-field"><span class="preview-key">Name</span><span class="preview-val" id="pv-name">—</span></div>
-              <div class="preview-field"><span class="preview-key">Department</span><span class="preview-val" id="pv-dept">—</span></div>
-              <div class="preview-field"><span class="preview-key">Student ID</span><span class="preview-val mono" id="pv-id">—</span></div>
-              <div class="preview-field"><span class="preview-key">Status</span><span class="preview-val" id="pv-status">—</span></div>
-            </div>
-
-            <button id="lookup-btn" type="button" class="btn btn-outline btn-full" style="margin-bottom:0.75rem">
-              🔎 Lookup Student
-            </button>
-
-            <button id="reg-btn" type="submit" class="btn btn-success btn-full" disabled>
-              ✅ Confirm Check-In
-            </button>
-          </form>
-        </div>
-
-        <div class="card">
-          <div class="card-title">ℹ️ How to Register</div>
-          <div style="font-size:0.875rem;color:var(--text-secondary);line-height:1.8">
-            <p style="margin-bottom:1rem">1. Enter the student's ID (e.g. <code class="mono" style="background:var(--bg-elevated);padding:2px 5px;border-radius:4px">JAIN2026041</code>)</p>
-            <p style="margin-bottom:1rem">2. Click <strong>Lookup Student</strong> to verify they're on the roster.</p>
-            <p style="margin-bottom:1rem">3. Confirm the details, then click <strong>Confirm Check-In</strong>.</p>
-            <p style="margin-bottom:1rem">4. Each student can only be checked in once.</p>
-            <p>5. Check-in is blocked when venue capacity is reached.</p>
-          </div>
-          <hr style="border:none;border-top:1px solid var(--border);margin:1.25rem 0" />
-          <div class="stats-grid" style="grid-template-columns:1fr 1fr;gap:0.75rem">
-            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;text-align:center">
-              <div style="font-size:1.5rem;font-weight:800;color:var(--success)" id="mini-checkedin">—</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em">Checked In</div>
-            </div>
-            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;text-align:center">
-              <div style="font-size:1.5rem;font-weight:800;color:var(--warning)" id="mini-remaining">—</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em">Remaining</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div id="login-alert" class="alert-box alert-error hidden" role="alert">
+      <span id="login-alert-text"></span>
     </div>
 
-    <!-- ─── Search Tab ──────────────────────────────────────────────────── -->
-    <div id="panel-search" class="tab-panel" role="tabpanel" aria-labelledby="tab-search">
-      <div class="card" style="margin-bottom:1.5rem">
-        <div class="card-title">🔍 Search & Filter</div>
-        <div class="search-bar">
-          <div class="search-input-wrap">
-            <span class="search-icon">🔍</span>
-            <input id="search-q" type="text" class="form-input search-input" placeholder="Search by name or student ID…" autocomplete="off" />
-          </div>
-          <select id="filter-dept" class="filter-select">
-            <option value="">All Departments</option>
-            <option value="CSE">CSE</option>
-            <option value="AIML">AIML</option>
-            <option value="ISE">ISE</option>
-            <option value="ECE">ECE</option>
-            <option value="IT">IT</option>
-          </select>
-          <select id="filter-status" class="filter-select">
-            <option value="">All Status</option>
-            <option value="INSIDE">Checked In</option>
-            <option value="NOT_ENTERED">Not Entered</option>
-          </select>
-          <button id="search-btn" class="btn btn-primary">Search</button>
-          <button id="search-clear-btn" class="btn btn-outline">Clear</button>
-        </div>
-
-        <div id="search-results-meta" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem"></div>
-
-        <div class="table-wrap">
-          <table class="data-table" aria-label="Search results">
-            <thead>
-              <tr>
-                <th>Student ID</th>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Status</th>
-                <th>Checked In At</th>
-              </tr>
-            </thead>
-            <tbody id="search-results-body">
-              <tr><td colspan="5" class="empty-state"><div class="empty-icon">🔍</div><p>Run a search to see results.</p></td></tr>
-            </tbody>
-          </table>
-        </div>
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="username">Organiser Username</label>
+        <input id="username" type="text" class="form-input" placeholder="e.g. admin" autocomplete="username" required />
       </div>
-    </div>
-
-    <!-- ─── Roster Tab ──────────────────────────────────────────────────── -->
-    <div id="panel-roster" class="tab-panel" role="tabpanel" aria-labelledby="tab-roster">
-      <div class="card">
-        <div class="card-title">👥 Pre-Registered Roster</div>
-        <div class="search-bar">
-          <div class="search-input-wrap" style="flex:1">
-            <span class="search-icon">🔍</span>
-            <input id="roster-q" type="text" class="form-input search-input" placeholder="Filter roster by name or ID…" autocomplete="off" />
-          </div>
-          <select id="roster-dept" class="filter-select">
-            <option value="">All Departments</option>
-            <option value="CSE">CSE</option>
-            <option value="AIML">AIML</option>
-            <option value="ISE">ISE</option>
-            <option value="ECE">ECE</option>
-            <option value="IT">IT</option>
-          </select>
-        </div>
-        <div class="table-wrap">
-          <table class="data-table" aria-label="Student roster">
-            <thead>
-              <tr><th>#</th><th>Student ID</th><th>Name</th><th>Department</th></tr>
-            </thead>
-            <tbody id="roster-body">
-              <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem">Loading…</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input id="password" type="password" class="form-input" placeholder="••••••••••" autocomplete="current-password" required />
       </div>
+      <button id="login-btn" type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem">
+        Sign In to Portal
+      </button>
+    </form>
+
+    <div style="margin-top:1.5rem;padding:0.85rem;background:var(--bg-muted);border-radius:var(--radius-sm);font-size:0.775rem;color:var(--text-secondary);text-align:center">
+      Demo Account: <strong>admin</strong> / <strong>admin@turing2026</strong>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════ SCRIPT ═══════════════════════════════ -->
+<!-- ═══════════════════════════ MAIN DASHBOARD ════════════════════════ -->
+<div id="main-page">
+  <!-- Top Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-mark">T</div>
+      <div class="brand-text">
+        <h2>Attendance Tracker</h2>
+        <p id="header-event-name">Nexus Tech Challenge</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="user-pill">
+        <span class="user-pill-name" id="user-display-name">Organiser</span>
+        <span class="role-badge" id="user-role-badge">ADMIN</span>
+      </div>
+      <button id="logout-btn" class="btn btn-sm btn-danger-outline">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="app-nav" role="tablist">
+    <button class="nav-item active" role="tab" data-tab="dashboard" id="tab-nav-dashboard">
+      Dashboard
+    </button>
+    <button class="nav-item" role="tab" data-tab="register" id="tab-nav-register">
+      Check-In
+    </button>
+    <button class="nav-item" role="tab" data-tab="search" id="tab-nav-search">
+      Search & Filter
+      <span class="counter-pill" id="counter-search">-</span>
+    </button>
+    <button class="nav-item" role="tab" data-tab="roster" id="tab-nav-roster">
+      Student Roster
+      <span class="counter-pill" id="counter-roster">-</span>
+    </button>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="app-content">
+
+    <!-- ── Tab 1: Dashboard ─────────────────────────────────────────── -->
+    <section id="panel-dashboard" class="tab-content active" role="tabpanel">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Total Capacity</span>
+            <div class="metric-icon-wrap">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+            </div>
+          </div>
+          <div class="metric-number" id="val-capacity">-</div>
+          <div class="metric-meta">Configured maximum venue seats</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Checked In</span>
+            <div class="metric-icon-wrap" style="color:var(--success);background:var(--success-light)">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="metric-number" id="val-checkedin" style="color:var(--success)">-</div>
+          <div class="metric-meta">Students successfully registered</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Remaining Slots</span>
+            <div class="metric-icon-wrap" style="color:var(--warning);background:var(--warning-light)">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+          </div>
+          <div class="metric-number" id="val-remaining" style="color:var(--warning)">-</div>
+          <div class="metric-meta">Available entry slots</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Pre-Registered</span>
+            <div class="metric-icon-wrap" style="color:var(--primary);background:var(--primary-light)">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+          </div>
+          <div class="metric-number" id="val-registered">-</div>
+          <div class="metric-meta">Total students on approved roster</div>
+        </div>
+      </div>
+
+      <!-- Capacity Tracker -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Venue Occupancy Rate</span>
+          <span class="occupancy-percentage" id="val-occupancy-pct">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="val-progress-bar" style="width:0%"></div>
+        </div>
+        <div class="occupancy-info">
+          <span id="val-occupancy-text">0 of 100 slots filled</span>
+          <span>Entry-only live tracking</span>
+        </div>
+      </div>
+
+      <!-- Recent Activity Stream -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recent Check-In Stream</span>
+          <button id="btn-refresh-stream" class="btn btn-sm btn-outline">Refresh</button>
+        </div>
+        <div id="recent-stream" class="activity-stream"></div>
+        <div id="recent-stream-empty" class="empty-state" style="display:none">
+          No check-ins recorded yet. Navigate to the Check-In tab to register students.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Tab 2: Check-In Registration ─────────────────────────────── -->
+    <section id="panel-register" class="tab-content" role="tabpanel">
+      <div class="register-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Register Student Entry</span>
+          </div>
+
+          <div id="reg-status-alert" class="alert-box hidden" role="alert">
+            <span id="reg-status-text"></span>
+          </div>
+
+          <form id="checkin-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="input-student-id">Student ID</label>
+              <input id="input-student-id" type="text" class="form-input" placeholder="e.g. JAIN2026041" autocomplete="off" required />
+            </div>
+
+            <!-- Verification Preview Box -->
+            <div id="lookup-preview" class="preview-box" aria-live="polite">
+              <div class="preview-row">
+                <span class="preview-key">Student Name</span>
+                <span class="preview-val" id="prev-name">-</span>
+              </div>
+              <div class="preview-row">
+                <span class="preview-key">Student ID</span>
+                <span class="preview-val mono" id="prev-id">-</span>
+              </div>
+              <div class="preview-row">
+                <span class="preview-key">Department</span>
+                <span class="preview-val" id="prev-dept">-</span>
+              </div>
+              <div class="preview-row">
+                <span class="preview-key">Current Status</span>
+                <span class="preview-val" id="prev-status">-</span>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:0.75rem;margin-top:1rem">
+              <button id="btn-lookup" type="button" class="btn btn-outline" style="flex:1">
+                Lookup Student
+              </button>
+              <button id="btn-checkin-submit" type="submit" class="btn btn-success" style="flex:1" disabled>
+                Confirm Entry
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Check-In Rules & Guidelines</span>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-secondary);line-height:1.7">
+            <p style="margin-bottom:0.75rem">1. <strong>Roster Validation:</strong> Only students listed on the pre-approved roster can be verified and registered.</p>
+            <p style="margin-bottom:0.75rem">2. <strong>One-Time Check-In:</strong> Each student is strictly restricted to one entry. Duplicate check-ins are blocked.</p>
+            <p style="margin-bottom:0.75rem">3. <strong>Idempotency:</strong> Every submission generates a unique request token to safely handle retries and double-clicks.</p>
+            <p>4. <strong>Capacity Lock:</strong> The system automatically blocks additional registrations once venue capacity is reached.</p>
+          </div>
+
+          <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-around">
+            <div style="text-align:center">
+              <div style="font-size:1.5rem;font-weight:800;color:var(--success)" id="mini-checkedin">-</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Checked In</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:1.5rem;font-weight:800;color:var(--warning)" id="mini-remaining">-</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Remaining Slots</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Tab 3: Search & Filter ───────────────────────────────────── -->
+    <section id="panel-search" class="tab-content" role="tabpanel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Search Attendance Records</span>
+        </div>
+
+        <div class="filter-row">
+          <div class="search-wrap">
+            <input id="input-search-query" type="text" class="form-input" placeholder="Search by name or student ID..." autocomplete="off" />
+          </div>
+          <div class="select-wrap">
+            <select id="select-dept" class="select-control">
+              <option value="">All Departments</option>
+              <option value="AIML">AIML</option>
+              <option value="CSE">CSE</option>
+              <option value="ISE">ISE</option>
+              <option value="ECE">ECE</option>
+              <option value="IT">IT</option>
+            </select>
+          </div>
+          <div class="select-wrap">
+            <select id="select-status" class="select-control">
+              <option value="">All Statuses</option>
+              <option value="INSIDE">Checked In</option>
+              <option value="NOT_ENTERED">Not Entered</option>
+            </select>
+          </div>
+          <button id="btn-search-exec" class="btn btn-primary">Search</button>
+          <button id="btn-search-reset" class="btn btn-outline">Reset</button>
+        </div>
+
+        <div id="search-feedback" style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem"></div>
+
+        <div class="table-container">
+          <table class="clean-table" aria-label="Attendance search results">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Full Name</th>
+                <th>Department</th>
+                <th>Attendance Status</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="table-search-body">
+              <tr>
+                <td colspan="5" class="empty-state">Enter a search query or select filters above.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Tab 4: Student Roster ────────────────────────────────────── -->
+    <section id="panel-roster" class="tab-content" role="tabpanel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pre-Registered Roster</span>
+        </div>
+
+        <div class="filter-row">
+          <div class="search-wrap">
+            <input id="input-roster-filter" type="text" class="form-input" placeholder="Filter roster by student name or ID..." autocomplete="off" />
+          </div>
+          <div class="select-wrap">
+            <select id="select-roster-dept" class="select-control">
+              <option value="">All Departments</option>
+              <option value="AIML">AIML</option>
+              <option value="CSE">CSE</option>
+              <option value="ISE">ISE</option>
+              <option value="ECE">ECE</option>
+              <option value="IT">IT</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="clean-table" aria-label="Student roster table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Department</th>
+              </tr>
+            </thead>
+            <tbody id="table-roster-body">
+              <tr>
+                <td colspan="4" class="empty-state">Loading roster records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════ LOGIC ════════════════════════════════ -->
 <script>
-/* ── Config ───────────────────────────────────────────────────────────── */
-const API = 'http://localhost:5000/api/v1';
+const API_BASE = 'http://localhost:5000/api/v1';
 
-/* ── State ────────────────────────────────────────────────────────────── */
-let token = localStorage.getItem('att_token') || null;
-let currentUser = null;
-let rosterData = [];
-let verifiedStudent = null;
-let regInFlight = false;
+let authToken = localStorage.getItem('att_token') || null;
+let currentSessionUser = null;
+let cachedRoster = [];
+let pendingVerifiedStudent = null;
+let isCheckinSubmitting = false;
 
-/* ── Utility: generate idempotency key ───────────────────────────────── */
-function genRequestId() {
-  return 'req_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+function generateRequestId() {
+  return 'req_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 }
 
-/* ── API helper ──────────────────────────────────────────────────────── */
-async function api(path, opts = {}) {
+function getStudentId(s) {
+  return s.student_id || s.id || '';
+}
+
+async function apiRequest(endpoint, options = {}) {
   const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  const res = await fetch(API + path, { headers, ...opts });
+  if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+  const res = await fetch(API_BASE + endpoint, { headers, ...options });
   const data = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, data };
 }
 
-/* ── Toast ────────────────────────────────────────────────────────────── */
-function toast(type, msg, duration = 4000) {
-  const icons = { success: '✅', error: '❌', info: 'ℹ️', warn: '⚠️' };
-  const el = document.createElement('div');
-  el.className = `toast toast-${type}`;
-  el.innerHTML = `<span class="toast-icon">${icons[type] || '•'}</span><span>${msg}</span>`;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => { el.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(() => el.remove(), 300); }, duration);
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-wrap');
+  const toast = document.createElement('div');
+  toast.className = `toast-msg ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.2s ease-out';
+    setTimeout(() => toast.remove(), 200);
+  }, 3500);
 }
 
-/* ── Show/hide alert banners ─────────────────────────────────────────── */
-function setAlert(id, msgId, iconId, type, msg) {
-  const el = document.getElementById(id);
-  const msgEl = document.getElementById(msgId);
-  const iconEl = iconId ? document.getElementById(iconId) : null;
-  el.className = `alert alert-${type}`;
-  msgEl.textContent = msg;
-  if (iconEl) iconEl.textContent = type === 'success' ? '✅' : type === 'error' ? '⚠️' : 'ℹ️';
-}
-function hideAlert(id) { document.getElementById(id).className = 'alert alert-hidden'; }
-
-/* ── Dept badge HTML ─────────────────────────────────────────────────── */
-function deptBadge(dept) {
-  const cls = ['CSE','AIML','ISE','ECE','IT'].includes(dept) ? `dept-${dept}` : 'dept-default';
-  return `<span class="dept-badge ${cls}">${dept}</span>`;
+function setAlertBanner(elementId, textId, type, message) {
+  const el = document.getElementById(elementId);
+  const textEl = document.getElementById(textId);
+  el.className = `alert-box alert-${type}`;
+  textEl.textContent = message;
 }
 
-/* ── Status badge HTML ───────────────────────────────────────────────── */
-function statusBadge(status) {
-  return `<span class="status-badge status-${status}"><span class="status-dot"></span>${status === 'INSIDE' ? 'Checked In' : 'Not Entered'}</span>`;
+function hideAlertBanner(elementId) {
+  document.getElementById(elementId).className = 'alert-box hidden';
 }
 
-/* ── Format timestamp ────────────────────────────────────────────────── */
-function fmtTime(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+function formatDepartmentBadge(dept) {
+  const known = ['CSE', 'AIML', 'ISE', 'ECE', 'IT'];
+  const cls = known.includes(dept) ? `dept-${dept}` : 'dept-default';
+  return `<span class="dept-tag ${cls}">${dept}</span>`;
 }
 
-/* ── Initials from name ──────────────────────────────────────────────── */
-function initials(name) {
-  if (!name) return '??';
+function formatStatusBadge(status) {
+  const isInside = status === 'INSIDE';
+  return `<span class="status-tag status-${status}"><span class="status-bullet"></span>${isInside ? 'Checked In' : 'Not Entered'}</span>`;
+}
+
+function formatTimestamp(isoString) {
+  if (!isoString) return '-';
+  const d = new Date(isoString);
+  return d.toLocaleString('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+}
+
+function getInitials(name) {
+  if (!name) return 'ST';
   return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
 
-/* ── Canonical Student ID Helper ─────────────────────────────────────── */
-function getSId(s) {
-  return s.student_id || s.id || '';
+async function initApplication() {
+  if (!authToken) {
+    displayLogin();
+    return;
+  }
+  const verify = await apiRequest('/dashboard');
+  if (!verify.ok) {
+    authToken = null;
+    localStorage.removeItem('att_token');
+    displayLogin();
+    return;
+  }
+  const rawUser = localStorage.getItem('att_user');
+  currentSessionUser = rawUser ? JSON.parse(rawUser) : { username: 'admin', role: 'ADMIN', name: 'Admin Organiser' };
+  displayDashboard();
+  loadDashboardData();
+  loadRosterData();
 }
 
-/* ── Auth Guard / Boot ────────────────────────────────────────────────── */
-async function boot() {
-  if (!token) { showLogin(); return; }
-  // Verify token still valid by hitting dashboard
-  const r = await api('/dashboard');
-  if (!r.ok) { token = null; localStorage.removeItem('att_token'); showLogin(); return; }
-  const userRaw = localStorage.getItem('att_user');
-  currentUser = userRaw ? JSON.parse(userRaw) : { username: 'organiser', role: 'ORGANISER', name: 'Organiser' };
-  showApp();
-  loadDashboard();
-  loadRoster();
-}
-
-function showLogin() {
+function displayLogin() {
   document.getElementById('login-page').style.display = 'flex';
   document.getElementById('main-page').classList.remove('visible');
 }
 
-function showApp() {
+function displayDashboard() {
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('main-page').classList.add('visible');
-  document.getElementById('header-user-name').textContent = currentUser.name;
-  const roleTag = document.getElementById('header-role-tag');
-  roleTag.textContent = currentUser.role;
-  roleTag.className = `role-tag role-${currentUser.role}`;
+  document.getElementById('user-display-name').textContent = currentSessionUser.name;
+  const roleBadge = document.getElementById('user-role-badge');
+  roleBadge.textContent = currentSessionUser.role;
+  roleBadge.className = `role-badge role-${currentSessionUser.role}`;
 }
 
-/* ── Login ───────────────────────────────────────────────────────────── */
+// ── Auth Handlers ──────────────────────────────────────────────────────────
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  hideAlert('login-alert');
+  hideAlertBanner('login-alert');
   const btn = document.getElementById('login-btn');
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
 
   if (!username || !password) {
-    setAlert('login-alert', 'login-alert-msg', null, 'error', 'Please enter both username and password.');
+    setAlertBanner('login-alert', 'login-alert-text', 'error', 'Username and password are required.');
     return;
   }
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Signing in…';
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
 
-  const r = await api('/auth/login', {
+  const res = await apiRequest('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ username, password })
   });
 
   btn.disabled = false;
-  btn.innerHTML = 'Sign In';
+  btn.textContent = 'Sign In to Portal';
 
-  if (!r.ok) {
-    const msg = r.data?.error?.message || 'Login failed. Check credentials.';
-    setAlert('login-alert', 'login-alert-msg', null, 'error', msg);
+  if (!res.ok) {
+    setAlertBanner('login-alert', 'login-alert-text', 'error', res.data?.error?.message || 'Login failed.');
     return;
   }
 
-  token = r.data.data.token;
-  currentUser = r.data.data.user;
-  localStorage.setItem('att_token', token);
-  localStorage.setItem('att_user', JSON.stringify(currentUser));
-  showApp();
-  loadDashboard();
-  loadRoster();
+  authToken = res.data.data.token;
+  currentSessionUser = res.data.data.user;
+  localStorage.setItem('att_token', authToken);
+  localStorage.setItem('att_user', JSON.stringify(currentSessionUser));
+
+  displayDashboard();
+  loadDashboardData();
+  loadRosterData();
 });
 
-/* ── Logout ──────────────────────────────────────────────────────────── */
 document.getElementById('logout-btn').addEventListener('click', () => {
-  token = null; currentUser = null;
+  authToken = null;
+  currentSessionUser = null;
   localStorage.removeItem('att_token');
   localStorage.removeItem('att_user');
-  showLogin();
+  displayLogin();
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 });
 
-/* ── Tab Navigation ──────────────────────────────────────────────────── */
-document.querySelectorAll('.nav-tab').forEach(tab => {
+// ── Tab Navigation ─────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-item').forEach(tab => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.nav-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    tab.setAttribute('aria-selected','true');
     document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
-    if (tab.dataset.tab === 'dashboard') loadDashboard();
+    if (tab.dataset.tab === 'dashboard') loadDashboardData();
   });
 });
 
-/* ── Dashboard ───────────────────────────────────────────────────────── */
-async function loadDashboard() {
-  const r = await api('/dashboard');
-  if (!r.ok) { toast('error', 'Failed to load dashboard.'); return; }
-  const d = r.data.data;
+// ── Dashboard Metrics ──────────────────────────────────────────────────────
+async function loadDashboardData() {
+  const res = await apiRequest('/dashboard');
+  if (!res.ok) {
+    showToast('Failed to load dashboard data', 'error');
+    return;
+  }
+  const data = res.data.data;
+  const eventTitle = data.event?.event_name || data.event?.name || 'Nexus Tech Challenge';
+  document.getElementById('login-event-title').textContent = eventTitle;
+  document.getElementById('header-event-name').textContent = eventTitle;
 
-  // Set event names dynamically from data
-  const eventName = d.event?.event_name || d.event?.name || 'Nexus Tech Challenge';
-  document.getElementById('login-event-name').textContent = eventName;
-  document.getElementById('header-event-sub').textContent = eventName;
+  document.getElementById('val-capacity').textContent = data.capacity;
+  document.getElementById('val-checkedin').textContent = data.checked_in;
+  document.getElementById('val-remaining').textContent = data.remaining_slots;
+  document.getElementById('val-registered').textContent = data.total_registered_students;
+  document.getElementById('val-occupancy-pct').textContent = data.occupancy_percentage + '%';
+  document.getElementById('val-progress-bar').style.width = data.occupancy_percentage + '%';
+  document.getElementById('val-occupancy-text').textContent = `${data.checked_in} of ${data.capacity} seats filled (${data.remaining_slots} remaining)`;
 
-  document.getElementById('stat-capacity').textContent = d.capacity;
-  document.getElementById('stat-checkedin').textContent = d.checked_in;
-  document.getElementById('stat-remaining').textContent = d.remaining_slots;
-  document.getElementById('stat-total-students').textContent = d.total_registered_students;
-  document.getElementById('occupancy-pct').textContent = d.occupancy_percentage + '%';
-  document.getElementById('progress-fill').style.width = d.occupancy_percentage + '%';
-  document.getElementById('occupancy-caption').textContent =
-    `${d.checked_in} of ${d.capacity} seats filled · ${d.remaining_slots} remaining`;
+  document.getElementById('mini-checkedin').textContent = data.checked_in;
+  document.getElementById('mini-remaining').textContent = data.remaining_slots;
 
-  // Mini stats for register tab
-  document.getElementById('mini-checkedin').textContent = d.checked_in;
-  document.getElementById('mini-remaining').textContent = d.remaining_slots;
-
-  // Recent list
-  const list = document.getElementById('recent-list');
-  const empty = document.getElementById('dashboard-empty');
-  if (!d.recent_check_ins || d.recent_check_ins.length === 0) {
-    list.innerHTML = '';
+  const stream = document.getElementById('recent-stream');
+  const empty = document.getElementById('recent-stream-empty');
+  if (!data.recent_check_ins || data.recent_check_ins.length === 0) {
+    stream.innerHTML = '';
     empty.style.display = 'block';
   } else {
     empty.style.display = 'none';
-    list.innerHTML = d.recent_check_ins.map(r => {
-      const name = r.name || r.student_id;
-      return `
-        <div class="activity-item">
-          <div class="activity-avatar">${initials(name)}</div>
+    stream.innerHTML = data.recent_check_ins.map(rec => `
+      <div class="activity-card">
+        <div class="activity-left">
+          <div class="activity-avatar">${getInitials(rec.name)}</div>
           <div>
-            <div class="activity-name">${r.name || '—'}</div>
-            <div class="activity-meta">${r.department || ''} · <span class="mono">${r.student_id}</span></div>
+            <div class="activity-primary">${rec.name || 'Student'}</div>
+            <div class="activity-secondary">${rec.department || '-'} &bull; <span class="mono">${rec.student_id}</span></div>
           </div>
-          <div class="activity-time">${fmtTime(r.checked_in_at)}</div>
-        </div>`;
-    }).join('');
+        </div>
+        <div class="activity-time">${formatTimestamp(rec.checked_in_at)}</div>
+      </div>
+    `).join('');
   }
 }
+document.getElementById('btn-refresh-stream').addEventListener('click', loadDashboardData);
 
-document.getElementById('refresh-dashboard-btn').addEventListener('click', loadDashboard);
+// ── Check-In Lookup & Registration ─────────────────────────────────────────
+const inputStudentId = document.getElementById('input-student-id');
+const lookupPreview = document.getElementById('lookup-preview');
+const btnCheckinSubmit = document.getElementById('btn-checkin-submit');
 
-/* ── Roster ──────────────────────────────────────────────────────────── */
-async function loadRoster() {
-  const r = await api('/students');
-  if (!r.ok) { toast('error', 'Failed to load student roster.'); return; }
-  rosterData = r.data.data.students;
-  document.getElementById('tab-roster-count').textContent = rosterData.length;
-  renderRoster(rosterData);
-}
-
-function renderRoster(students) {
-  const body = document.getElementById('roster-body');
-  if (!students.length) {
-    body.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">👥</div><p>No students found.</p></div></td></tr>`;
+document.getElementById('btn-lookup').addEventListener('click', async () => {
+  const queryId = inputStudentId.value.trim().toUpperCase();
+  if (!queryId) {
+    setAlertBanner('reg-status-alert', 'reg-status-text', 'error', 'Please enter a Student ID to lookup.');
     return;
   }
-  body.innerHTML = students.map((s, i) => `
-    <tr>
-      <td style="color:var(--text-muted)">${i + 1}</td>
-      <td class="mono">${getSId(s)}</td>
-      <td>${s.name}</td>
-      <td>${deptBadge(s.department)}</td>
-    </tr>`).join('');
-}
+  hideAlertBanner('reg-status-alert');
+  pendingVerifiedStudent = null;
+  btnCheckinSubmit.disabled = true;
+  lookupPreview.classList.remove('visible');
 
-// Roster filter (client-side for speed)
-function filterRoster() {
-  const q = document.getElementById('roster-q').value.toLowerCase().trim();
-  const dept = document.getElementById('roster-dept').value.toUpperCase();
-  let filtered = rosterData;
-  if (q) filtered = filtered.filter(s => getSId(s).toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
-  if (dept) filtered = filtered.filter(s => s.department.toUpperCase() === dept);
-  renderRoster(filtered);
-}
-document.getElementById('roster-q').addEventListener('input', filterRoster);
-document.getElementById('roster-dept').addEventListener('change', filterRoster);
-
-/* ── Registration ─────────────────────────────────────────────────────── */
-const regIdInput = document.getElementById('reg-student-id');
-const studentPreview = document.getElementById('student-preview');
-const regBtn = document.getElementById('reg-btn');
-
-document.getElementById('lookup-btn').addEventListener('click', async () => {
-  const id = regIdInput.value.trim().toUpperCase();
-  if (!id) { setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', 'Please enter a Student ID.'); return; }
-
-  hideAlert('reg-alert');
-  verifiedStudent = null;
-  regBtn.disabled = true;
-  studentPreview.classList.remove('visible');
-
-  // Check from roster first
-  const r = await api('/students/' + id);
-  if (!r.ok) {
-    setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', r.data?.error?.message || 'Student not found.');
+  const studentRes = await apiRequest('/students/' + queryId);
+  if (!studentRes.ok) {
+    setAlertBanner('reg-status-alert', 'reg-status-text', 'error', studentRes.data?.error?.message || 'Student not found in roster.');
     return;
   }
+  const student = studentRes.data.data.student;
+  const canonicalId = getStudentId(student);
 
-  const student = r.data.data.student;
-  const sId = getSId(student);
-
-  // Check if already checked in
-  const searchR = await api('/attendance/search?q=' + sId);
-  let alreadyIn = false;
-  if (searchR.ok) {
-    const match = searchR.data.data.records.find(rec => rec.student_id.toUpperCase() === sId.toUpperCase());
-    if (match && match.status === 'INSIDE') alreadyIn = true;
+  const searchRes = await apiRequest('/attendance/search?q=' + canonicalId);
+  let isAlreadyInside = false;
+  if (searchRes.ok) {
+    const match = searchRes.data.data.records.find(r => r.student_id.toUpperCase() === canonicalId.toUpperCase());
+    if (match && match.status === 'INSIDE') isAlreadyInside = true;
   }
 
-  verifiedStudent = student;
-  document.getElementById('pv-name').textContent = student.name;
-  document.getElementById('pv-id').textContent = sId;
-  document.getElementById('pv-dept').innerHTML = deptBadge(student.department);
-  document.getElementById('pv-status').innerHTML = statusBadge(alreadyIn ? 'INSIDE' : 'NOT_ENTERED');
-  studentPreview.classList.add('visible');
+  pendingVerifiedStudent = student;
+  document.getElementById('prev-name').textContent = student.name;
+  document.getElementById('prev-id').textContent = canonicalId;
+  document.getElementById('prev-dept').innerHTML = formatDepartmentBadge(student.department);
+  document.getElementById('prev-status').innerHTML = formatStatusBadge(isAlreadyInside ? 'INSIDE' : 'NOT_ENTERED');
+  lookupPreview.classList.add('visible');
 
-  if (alreadyIn) {
-    setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', 'This student has already checked in.');
-    regBtn.disabled = true;
+  if (isAlreadyInside) {
+    setAlertBanner('reg-status-alert', 'reg-status-text', 'error', 'Student is already checked into the venue.');
+    btnCheckinSubmit.disabled = true;
   } else {
-    hideAlert('reg-alert');
-    regBtn.disabled = false;
+    hideAlertBanner('reg-status-alert');
+    btnCheckinSubmit.disabled = false;
   }
 });
 
-document.getElementById('reg-form').addEventListener('submit', async (e) => {
+document.getElementById('checkin-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!verifiedStudent || regBtn.disabled || regInFlight) return;
-  regInFlight = true;
-  regBtn.disabled = true;
-  regBtn.innerHTML = '<span class="spinner"></span> Registering…';
+  if (!pendingVerifiedStudent || btnCheckinSubmit.disabled || isCheckinSubmitting) return;
 
-  const requestId = genRequestId();
-  const sId = getSId(verifiedStudent);
+  isCheckinSubmitting = true;
+  btnCheckinSubmit.disabled = true;
+  btnCheckinSubmit.innerHTML = '<span class="spinner"></span> Checking in...';
 
-  const r = await api('/attendance/register', {
+  const reqId = generateRequestId();
+  const canonicalId = getStudentId(pendingVerifiedStudent);
+
+  const res = await apiRequest('/attendance/register', {
     method: 'POST',
-    body: JSON.stringify({ student_id: sId, request_id: requestId })
+    body: JSON.stringify({ student_id: canonicalId, request_id: reqId })
   });
 
-  regInFlight = false;
-  regBtn.innerHTML = '✅ Confirm Check-In';
+  isCheckinSubmitting = false;
+  btnCheckinSubmit.textContent = 'Confirm Entry';
 
-  if (!r.ok) {
-    const errCode = r.data?.error?.code || '';
-    const msg = r.data?.error?.message || 'Registration failed.';
-    if (errCode === 'DUPLICATE_ATTENDANCE') {
-      setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', msg);
-      document.getElementById('pv-status').innerHTML = statusBadge('INSIDE');
-    } else if (errCode === 'CAPACITY_REACHED') {
-      setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', msg);
-    } else {
-      setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'error', msg);
-    }
+  if (!res.ok) {
+    const msg = res.data?.error?.message || 'Attendance registration failed.';
+    setAlertBanner('reg-status-alert', 'reg-status-text', 'error', msg);
     return;
   }
 
-  // Success
-  const d = r.data.data;
-  toast('success', `✅ ${d.name} checked in! (${d.current_count}/${d.capacity})`);
-  setAlert('reg-alert', 'reg-alert-msg', 'reg-alert-icon', 'success',
-    `${d.name} successfully checked in at ${fmtTime(d.checked_in_at)}. ID: ${d.attendance_id}`);
-  document.getElementById('pv-status').innerHTML = statusBadge('INSIDE');
-  verifiedStudent = null;
-  regIdInput.value = '';
-  regBtn.disabled = true;
+  const record = res.data.data;
+  showToast(`${record.name} successfully checked in.`, 'success');
+  setAlertBanner('reg-status-alert', 'reg-status-text', 'success',
+    `Check-in recorded for ${record.name} (${record.student_id}) at ${formatTimestamp(record.checked_in_at)}. Attendance ID: ${record.attendance_id}`);
 
-  // Refresh mini stats and dashboard
-  loadDashboard();
+  document.getElementById('prev-status').innerHTML = formatStatusBadge('INSIDE');
+  pendingVerifiedStudent = null;
+  inputStudentId.value = '';
+  btnCheckinSubmit.disabled = true;
+  loadDashboardData();
 });
 
-// Clear preview when ID changes
-regIdInput.addEventListener('input', () => {
-  studentPreview.classList.remove('visible');
-  verifiedStudent = null;
-  regBtn.disabled = true;
-  hideAlert('reg-alert');
+inputStudentId.addEventListener('input', () => {
+  lookupPreview.classList.remove('visible');
+  pendingVerifiedStudent = null;
+  btnCheckinSubmit.disabled = true;
+  hideAlertBanner('reg-status-alert');
 });
 
-/* ── Search ──────────────────────────────────────────────────────────── */
-async function runSearch() {
-  const q = document.getElementById('search-q').value.trim();
-  const dept = document.getElementById('filter-dept').value;
-  const status = document.getElementById('filter-status').value;
+// ── Search & Filter ────────────────────────────────────────────────────────
+async function executeSearch() {
+  const q = document.getElementById('input-search-query').value.trim();
+  const dept = document.getElementById('select-dept').value;
+  const status = document.getElementById('select-status').value;
 
-  let params = new URLSearchParams();
+  const params = new URLSearchParams();
   if (q) params.set('q', q);
   if (dept) params.set('department', dept);
   if (status) params.set('status', status);
 
-  const r = await api('/attendance/search?' + params.toString());
-  if (!r.ok) { toast('error', 'Search failed.'); return; }
-
-  const records = r.data.data.records;
-  const count = r.data.data.count;
-  document.getElementById('tab-search-count').textContent = count;
-  document.getElementById('search-results-meta').textContent = `${count} result${count !== 1 ? 's' : ''} found`;
-
-  const body = document.getElementById('search-results-body');
-  if (!records.length) {
-    body.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🔍</div><p>No results match your search.</p></div></td></tr>`;
+  const res = await apiRequest('/attendance/search?' + params.toString());
+  if (!res.ok) {
+    showToast('Search query failed', 'error');
     return;
   }
-  body.innerHTML = records.map(r => `
-    <tr>
-      <td class="mono">${r.student_id}</td>
-      <td>${r.name}</td>
-      <td>${deptBadge(r.department)}</td>
-      <td>${statusBadge(r.status)}</td>
-      <td style="font-size:0.8rem;color:var(--text-muted)">${fmtTime(r.checked_in_at)}</td>
-    </tr>`).join('');
-}
+  const records = res.data.data.records;
+  const count = res.data.data.count;
 
-document.getElementById('search-btn').addEventListener('click', runSearch);
-document.getElementById('search-q').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
-document.getElementById('search-clear-btn').addEventListener('click', () => {
-  document.getElementById('search-q').value = '';
-  document.getElementById('filter-dept').value = '';
-  document.getElementById('filter-status').value = '';
-  document.getElementById('search-results-body').innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🔍</div><p>Run a search to see results.</p></div></td></tr>`;
-  document.getElementById('search-results-meta').textContent = '';
-  document.getElementById('tab-search-count').textContent = '—';
+  document.getElementById('counter-search').textContent = count;
+  document.getElementById('search-feedback').textContent = `Showing ${count} matching record${count === 1 ? '' : 's'}.`;
+
+  const tbody = document.getElementById('table-search-body');
+  if (records.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No records match your query.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = records.map(r => `
+    <tr>
+      <td class="mono"><strong>${r.student_id}</strong></td>
+      <td>${r.name}</td>
+      <td>${formatDepartmentBadge(r.department)}</td>
+      <td>${formatStatusBadge(r.status)}</td>
+      <td style="font-size:0.8rem;color:var(--text-secondary)">${formatTimestamp(r.checked_in_at)}</td>
+    </tr>
+  `).join('');
+}
+document.getElementById('btn-search-exec').addEventListener('click', executeSearch);
+document.getElementById('input-search-query').addEventListener('keydown', e => { if (e.key === 'Enter') executeSearch(); });
+document.getElementById('btn-search-reset').addEventListener('click', () => {
+  document.getElementById('input-search-query').value = '';
+  document.getElementById('select-dept').value = '';
+  document.getElementById('select-status').value = '';
+  document.getElementById('table-search-body').innerHTML = '<tr><td colspan="5" class="empty-state">Enter a search query or select filters above.</td></tr>';
+  document.getElementById('search-feedback').textContent = '';
+  document.getElementById('counter-search').textContent = '-';
 });
 
-/* ── Boot ────────────────────────────────────────────────────────────── */
-boot();
+// ── Student Roster ─────────────────────────────────────────────────────────
+async function loadRosterData() {
+  const res = await apiRequest('/students');
+  if (!res.ok) {
+    showToast('Failed to load roster', 'error');
+    return;
+  }
+  cachedRoster = res.data.data.students;
+  document.getElementById('counter-roster').textContent = cachedRoster.length;
+  renderRosterTable(cachedRoster);
+}
+
+function renderRosterTable(students) {
+  const tbody = document.getElementById('table-roster-body');
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No roster students match your filter.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = students.map((s, idx) => `
+    <tr>
+      <td style="color:var(--text-muted)">${idx + 1}</td>
+      <td class="mono"><strong>${getStudentId(s)}</strong></td>
+      <td>${s.name}</td>
+      <td>${formatDepartmentBadge(s.department)}</td>
+    </tr>
+  `).join('');
+}
+
+function filterRosterView() {
+  const q = document.getElementById('input-roster-filter').value.toLowerCase().trim();
+  const dept = document.getElementById('select-roster-dept').value.toUpperCase();
+  let list = cachedRoster;
+  if (q) list = list.filter(s => getStudentId(s).toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+  if (dept) list = list.filter(s => s.department.toUpperCase() === dept);
+  renderRosterTable(list);
+}
+document.getElementById('input-roster-filter').addEventListener('input', filterRosterView);
+document.getElementById('select-roster-dept').addEventListener('change', filterRosterView);
+
+// ── Bootstrap ──────────────────────────────────────────────────────────────
+initApplication();
 </script>
 </body>
 </html>
