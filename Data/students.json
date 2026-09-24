@@ -1,0 +1,59 @@
+{
+  "event": {
+    "event_id": "NEXUS_TECH_2026",
+    "event_name": "Nexus Tech Challenge",
+    "capacity": 100
+  },
+  "students": [
+    {
+      "student_id": "JAIN2026041",
+      "name": "Aarav Mehta",
+      "department": "AIML"
+    },
+    {
+      "student_id": "JAIN2026042",
+      "name": "Diya Sharma",
+      "department": "CSE"
+    },
+    {
+      "student_id": "JAIN2026043",
+      "name": "Rohan Kapoor",
+      "department": "ISE"
+    },
+    {
+      "student_id": "JAIN2026044",
+      "name": "Ananya Rao",
+      "department": "AIML"
+    },
+    {
+      "student_id": "JAIN2026045",
+      "name": "Vihaan Patel",
+      "department": "ECE"
+    },
+    {
+      "student_id": "JAIN2026046",
+      "name": "Ishita Nair",
+      "department": "CSE"
+    },
+    {
+      "student_id": "JAIN2026047",
+      "name": "Aditya Verma",
+      "department": "ISE"
+    },
+    {
+      "student_id": "JAIN2026048",
+      "name": "Meera Iyer",
+      "department": "AIML"
+    },
+    {
+      "student_id": "JAIN2026049",
+      "name": "Kabir Singh",
+      "department": "CSE"
+    },
+    {
+      "student_id": "JAIN2026050",
+      "name": "Sneha Joshi",
+      "department": "ECE"
+    }
+  ]
+}
